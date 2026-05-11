@@ -9,133 +9,132 @@
 
 <style>
 :root{
-    --bg:#060a12;
-    --surface:#0d1320;
-    --surface2:#111c2e;
-    --border:#1a2740;
-    --text:#e8eef8;
-    --muted:#7b8aa6;
-    --gold:#f0b90b;
-    --green:#00e676;
-    --red:#ff4d67;
-    --blue:#2979ff;
-    --yellow:#ffd600;
+--bg:#060a12;
+--surface:#0d1320;
+--surface2:#111c2e;
+--border:#1a2740;
+--text:#e8eef8;
+--muted:#7b8aa6;
+--gold:#f0b90b;
+--green:#00e676;
+--red:#ff4d67;
+--blue:#2979ff;
 }
 
 *{margin:0;padding:0;box-sizing:border-box;}
 
 body{
-    background:var(--bg);
-    color:var(--text);
-    font-family:'DM Sans',sans-serif;
+background:var(--bg);
+color:var(--text);
+font-family:'DM Sans',sans-serif;
 }
 
-.container{max-width:900px;margin:auto;padding:16px;}
+.container{
+max-width:900px;
+margin:auto;
+padding:16px;
+padding-bottom:120px;
+}
 
 /* HEADER */
 .header{
-    position:sticky;
-    top:0;
-    background:rgba(6,10,18,.95);
-    backdrop-filter:blur(10px);
-    border-bottom:1px solid var(--border);
-    padding:14px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-}
-
-.badge{
-    font-size:.7rem;
-    padding:5px 10px;
-    border-radius:20px;
-    border:1px solid var(--border);
-    background:var(--surface2);
+position:sticky;
+top:0;
+background:rgba(6,10,18,.95);
+backdrop-filter:blur(10px);
+border-bottom:1px solid var(--border);
+padding:14px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+z-index:10;
 }
 
 /* CARD */
 .card{
-    background:var(--surface);
-    border:1px solid var(--border);
-    border-radius:16px;
-    padding:16px;
-    margin-bottom:14px;
+background:var(--surface);
+border:1px solid var(--border);
+border-radius:16px;
+padding:16px;
+margin-bottom:14px;
 }
 
 .title{
-    font-size:.75rem;
-    color:var(--muted);
-    font-family:'Space Mono',monospace;
-    margin-bottom:10px;
+font-size:.75rem;
+color:var(--muted);
+font-family:'Space Mono',monospace;
+margin-bottom:10px;
 }
 
-/* SIGNAL */
+/* SIGNAL BOX */
 .signal{
-    padding:16px;
-    border-radius:14px;
-    background:var(--surface2);
-    border-left:4px solid var(--gold);
+padding:16px;
+border-radius:14px;
+background:var(--surface2);
+border-left:4px solid var(--green);
+font-family:'Space Mono',monospace;
 }
 
-.signal.long{border-left-color:var(--green);}
 .signal.short{border-left-color:var(--red);}
 
-.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
-
-.box{
-    font-size:.75rem;
-    padding:5px 8px;
-    border-radius:8px;
-    background:var(--surface);
-    border:1px solid var(--border);
-    font-family:'Space Mono',monospace;
+/* FLOATING MENU */
+.floating{
+position:fixed;
+bottom:18px;
+left:50%;
+transform:translateX(-50%);
+display:flex;
+gap:10px;
+background:rgba(13,19,32,.9);
+padding:10px;
+border:1px solid var(--border);
+border-radius:16px;
+backdrop-filter:blur(12px);
 }
 
-/* SCALPER */
-.scalper{
-    display:grid;
-    gap:8px;
+.fbtn{
+font-size:.75rem;
+padding:8px 10px;
+border-radius:10px;
+background:var(--surface2);
+border:1px solid var(--border);
+color:var(--text);
+cursor:pointer;
 }
 
-.scalp-item{
-    display:flex;
-    justify-content:space-between;
-    padding:10px;
-    background:var(--surface2);
-    border-radius:10px;
-    font-size:.8rem;
-    font-family:'Space Mono';
+.fbtn.active{
+background:var(--blue);
 }
 
-/* BUTTON */
-.btn{
-    background:var(--blue);
-    border:none;
-    padding:10px 14px;
-    border-radius:10px;
-    color:white;
-    cursor:pointer;
+/* LIST */
+.item{
+display:flex;
+justify-content:space-between;
+padding:10px;
+background:var(--surface2);
+border-radius:10px;
+font-family:'Space Mono',monospace;
+font-size:.8rem;
 }
 
 /* FAUCET */
 .faucet{
-    text-align:center;
-    padding:14px;
-    background:linear-gradient(135deg,#0d1a10,#0d1320);
-    border:1px solid rgba(0,230,118,.2);
-    border-radius:14px;
+text-align:center;
+padding:14px;
+background:linear-gradient(135deg,#0d1a10,#0d1320);
+border:1px solid rgba(0,230,118,.2);
+border-radius:14px;
 }
 
 a{
-    color:inherit;
-    text-decoration:none;
-    font-weight:700;
-    display:inline-block;
-    margin-top:10px;
-    background:var(--gold);
-    padding:12px;
-    border-radius:10px;
-    color:#000;
+display:inline-block;
+margin-top:10px;
+background:var(--gold);
+padding:12px;
+border-radius:10px;
+color:#000;
+text-decoration:none;
+font-weight:700;
 }
 </style>
 </head>
@@ -143,133 +142,140 @@ a{
 <body>
 
 <div class="header">
-    <div>⚡ Trader Scanner</div>
-    <div class="badge">LIVE</div>
+<div>⚡ Trader Scanner</div>
+<div>LIVE</div>
 </div>
 
 <div class="container">
 
-<!-- BEST SIGNAL -->
+<!-- BEST TRADE -->
 <div class="card">
 <div class="title">BEST TRADE SIGNAL</div>
-
-<div id="signalBox">
-Loading...
+<div id="signalBox">Loading...</div>
 </div>
 
-</div>
-
-<!-- SCALPER COINS -->
+<!-- DYNAMIC SECTION -->
 <div class="card">
-<div class="title">SCALPER COINS (SHORT TERM)</div>
-
-<div class="scalper" id="scalper">
-</div>
-
+<div class="title" id="sectionTitle">SCALPING COINS</div>
+<div id="dynamicArea"></div>
 </div>
 
 <!-- FAUCET -->
 <div class="card faucet">
 <div class="title">EARN FREE CRYPTO</div>
-
-<div style="font-size:.8rem;color:var(--muted)">
-Rating: ⭐ 4.6 / 5 (2,800+ users)
+<div>Rating ⭐ 4.6 / 5</div>
+<a href="https://faucetcrypto.com/r/4202112" target="_blank">Claim Crypto</a>
 </div>
-
-<a href="https://faucetcrypto.com/r/4202112" target="_blank">
-Claim Free Crypto
-</a>
 
 </div>
 
+<!-- FLOATING BUTTONS -->
+<div class="floating">
+<button class="fbtn active" onclick="load('scalp',this)">Scalp</button>
+<button class="fbtn" onclick="load('up',this)">Up</button>
+<button class="fbtn" onclick="load('down',this)">Down</button>
+<button class="fbtn" onclick="load('early',this)">Early</button>
 </div>
 
 <script>
 
-let coins=["BTCUSDT","ETHUSDT","BNBUSDT","SOLUSDT","XRPUSDT","DOGEUSDT","ADAUSDT"];
+let coins=["BTCUSDT","ETHUSDT","BNBUSDT","SOLUSDT","XRPUSDT","DOGEUSDT"];
 
-async function getPrice(symbol){
-    const r=await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${symbol}`);
-    return await r.json();
+async function price(sym){
+let r=await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${sym}`);
+return await r.json();
 }
 
-async function bestSignal(){
+/* BEST TRADE WITH INDICATOR */
+async function best(){
 
-    let best=null;
+let best=null;
 
-    for(let c of coins){
+for(let c of coins){
+try{
+let d=await price(c);
+let ch=parseFloat(d.priceChangePercent);
 
-        try{
-
-            let d=await getPrice(c);
-
-            let change=parseFloat(d.priceChangePercent);
-
-            let score=Math.abs(change);
-
-            let type=change>0?"LONG":"SHORT";
-
-            if(!best || score>best.score){
-
-                best={
-                    symbol:c,
-                    type,
-                    price:d.lastPrice,
-                    change,
-                    score
-                };
-            }
-
-        }catch(e){}
-    }
-
-    document.getElementById("signalBox").innerHTML=`
-        <div class="signal ${best.type.toLowerCase()}">
-
-            <div><b>${best.symbol}</b></div>
-
-            <div class="row">
-                <div class="box">Entry: ${best.price}</div>
-                <div class="box">SL: ${(best.price*0.98).toFixed(2)}</div>
-                <div class="box">TP: ${(best.price*1.03).toFixed(2)}</div>
-            </div>
-
-            <div style="margin-top:10px;font-size:.8rem">
-                Confidence: ${best.score.toFixed(2)}%
-            </div>
-
-        </div>
-    `;
+if(!best || Math.abs(ch) > Math.abs(best.change)){
+best={
+symbol:c,
+price:d.lastPrice,
+change:ch,
+type: ch>0 ? "LONG" : "SHORT"
+};
+}
+}catch(e){}
 }
 
-async function scalpers(){
+document.getElementById("signalBox").innerHTML=`
+<div class="signal ${best.type.toLowerCase()}">
 
-    let list=[];
+<div style="font-size:0.85rem;font-weight:700;margin-bottom:8px;">
+${best.symbol}
+</div>
 
-    for(let c of coins.slice(0,6)){
+<div style="
+display:inline-block;
+padding:6px 10px;
+border-radius:20px;
+font-size:0.7rem;
+margin-bottom:10px;
+background:${best.type==="LONG"?"rgba(0,230,118,.15)":"rgba(255,77,103,.15)"};
+color:${best.type==="LONG"?"#00e676":"#ff4d67"};
+">
+${best.type} SIGNAL
+</div>
 
-        try{
-            let d=await getPrice(c);
+<br>
 
-            list.push(`
-                <div class="scalp-item">
-                    <span>${c}</span>
-                    <span>${parseFloat(d.priceChangePercent).toFixed(2)}%</span>
-                </div>
-            `);
+Entry: ${best.price}<br>
+SL: ${(best.price*0.98).toFixed(2)} | TP: ${(best.price*1.03).toFixed(2)}<br><br>
 
-        }catch(e){}
-    }
+${best.change>0?"+":""}${best.change.toFixed(2)}%
 
-    document.getElementById("scalper").innerHTML=list.join("");
+</div>
+`;
 }
 
-bestSignal();
-scalers=()=>{};
-scalpers();
+/* BUTTON SYSTEM */
+async function load(type,btn){
 
-setInterval(bestSignal,300000);
-setInterval(scalpers,300000);
+document.querySelectorAll(".fbtn").forEach(b=>b.classList.remove("active"));
+btn.classList.add("active");
+
+let list=[];
+
+for(let c of coins.slice(0,3)){
+try{
+let d=await price(c);
+
+if(type==="scalp"){
+list.push(`${c} | ${d.priceChangePercent}%`);
+}
+if(type==="up" && d.priceChangePercent>0){
+list.push(`${c} ↑ ${d.priceChangePercent}%`);
+}
+if(type==="down" && d.priceChangePercent<0){
+list.push(`${c} ↓ ${d.priceChangePercent}%`);
+}
+if(type==="early"){
+list.push(`${c} momentum`);
+}
+}catch(e){}
+}
+
+document.getElementById("dynamicArea").innerHTML=
+list.map(x=>`<div class="item">${x}</div>`).join("");
+
+document.getElementById("sectionTitle").innerText=
+type.toUpperCase();
+}
+
+/* INIT */
+best();
+load("scalp",document.querySelector(".fbtn"));
+
+setInterval(best,300000);
 
 </script>
 
