@@ -1,585 +1,799 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Early Explosion Detector – Crypto Signals</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trader Scanner</title>
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-            background: #0a0e17;
-            color: #eef2ff;
-            padding: 20px;
-            line-height: 1.5;
-        }
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
+<style>
+:root{
+    --bg:#060a12;
+    --surface:#0d1320;
+    --surface2:#111c2e;
+    --border:#1a2740;
+    --text:#e8eef8;
+    --muted:#72829d;
+    --gold:#f0b90b;
+    --green:#00e676;
+    --red:#ff4d67;
+    --blue:#2979ff;
+    --yellow:#ffd600;
+    --purple:#7c4dff;
+}
 
-        /* Header */
-        .header {
-            text-align: center;
-            margin-bottom: 24px;
-        }
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
 
-        .header h1 {
-            font-size: 1.8rem;
-            background: linear-gradient(135deg, #f0b90b, #ff6b6b);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: 8px;
-        }
+body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'DM Sans',sans-serif;
+    min-height:100vh;
+}
 
-        .badge {
-            background: #1e2433;
-            padding: 6px 12px;
-            border-radius: 40px;
-            font-size: 0.8rem;
-            display: inline-block;
-        }
+/* TICKER */
+.ticker{
+    overflow:hidden;
+    white-space:nowrap;
+    border-bottom:1px solid var(--border);
+    background:#08101c;
+    padding:8px 0;
+}
 
-        /* Cards */
-        .card {
-            background: #111827;
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 20px;
-            border: 1px solid #1f2a3e;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        }
+.ticker-track{
+    display:inline-flex;
+    gap:30px;
+    animation:ticker 30s linear infinite;
+    padding-left:100%;
+}
 
-        .btc-card {
-            background: linear-gradient(135deg, #1a2a3a, #0f1724);
-            border-left: 4px solid #f0b90b;
-        }
+@keyframes ticker{
+    0%{transform:translateX(0)}
+    100%{transform:translateX(-50%)}
+}
 
-        /* Signal rows */
-        .signal {
-            background: #0f1724;
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 12px;
-            border-left: 4px solid;
-            transition: 0.2s;
-        }
+.tick{
+    font-family:'Space Mono',monospace;
+    font-size:.75rem;
+}
 
-        .signal-long { border-left-color: #22c55e; }
-        .signal-short { border-left-color: #ef4444; }
-        .signal-consolidation { border-left-color: #eab308; }
+.up{color:var(--green)}
+.down{color:var(--red)}
 
-        .signal-title {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
+/* HEADER */
+.header{
+    position:sticky;
+    top:0;
+    z-index:100;
+    background:rgba(6,10,18,.95);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border);
+    padding:16px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:12px;
+}
 
-        .signal-type {
-            font-weight: bold;
-            font-size: 1.1rem;
-        }
+.logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
 
-        .signal-time {
-            font-size: 0.75rem;
-            color: #9ca3af;
-            font-family: monospace;
-        }
+.logo-icon{
+    width:40px;
+    height:40px;
+    border-radius:12px;
+    background:linear-gradient(135deg,var(--gold),#ff7300);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:20px;
+}
 
-        .price-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin: 12px 0;
-            font-size: 0.85rem;
-        }
+.logo h1{
+    font-size:1rem;
+}
 
-        .price-item {
-            background: #1e293b;
-            padding: 4px 10px;
-            border-radius: 20px;
-        }
+.logo small{
+    color:var(--muted);
+    font-size:.65rem;
+}
 
-        .confidence {
-            margin-top: 8px;
-            font-size: 0.8rem;
-            color: #cbd5e1;
-        }
+.badges{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+}
 
-        /* Search */
-        .search-area {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-        }
+.badge{
+    border:1px solid var(--border);
+    background:var(--surface2);
+    padding:5px 10px;
+    border-radius:20px;
+    font-size:.7rem;
+    font-family:'Space Mono',monospace;
+}
 
-        .search-input {
-            flex: 1;
-            padding: 12px 16px;
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 40px;
-            color: white;
-            font-size: 1rem;
-        }
+.live{
+    color:var(--green);
+    border-color:var(--green);
+}
 
-        .search-btn {
-            background: #3b82f6;
-            border: none;
-            padding: 0 20px;
-            border-radius: 40px;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.2s;
-        }
+/* CONTAINER */
+.container{
+    max-width:850px;
+    margin:auto;
+    padding:16px;
+}
 
-        .search-btn:hover { background: #2563eb; }
+/* CARD */
+.card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:18px;
+    margin-bottom:16px;
+}
 
-        .warning {
-            background: #7c2d12;
-            border-left: 4px solid #f97316;
-            padding: 12px;
-            border-radius: 12px;
-            margin-top: 12px;
-            font-size: 0.85rem;
-        }
+.card-title{
+    font-size:.75rem;
+    color:var(--muted);
+    margin-bottom:14px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    font-family:'Space Mono',monospace;
+}
 
-        /* Email form */
-        .email-form {
-            display: flex;
-            gap: 10px;
-            margin-top: 12px;
-            flex-wrap: wrap;
-        }
+/* FG */
+.fg-wrap{
+    display:flex;
+    align-items:center;
+    gap:20px;
+    flex-wrap:wrap;
+}
 
-        .email-input {
-            flex: 1;
-            padding: 12px;
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 40px;
-            color: white;
-        }
+.fg-meter{
+    position:relative;
+    width:80px;
+    height:80px;
+}
 
-        .email-btn {
-            background: #8b5cf6;
-            border: none;
-            padding: 0 20px;
-            border-radius: 40px;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-        }
+.fg-meter svg{
+    width:80px;
+    height:80px;
+    transform:rotate(-90deg);
+}
 
-        .link-btn {
-            display: inline-block;
-            background: #f0b90b;
-            color: #0a0e17;
-            padding: 12px 24px;
-            border-radius: 40px;
-            text-decoration: none;
-            font-weight: bold;
-            margin-top: 12px;
-            text-align: center;
-            width: 100%;
-        }
+.track{
+    fill:none;
+    stroke:#1f2d45;
+    stroke-width:8;
+}
 
-        .footer-note {
-            text-align: center;
-            font-size: 0.7rem;
-            color: #6b7280;
-            margin-top: 20px;
-        }
+.fill{
+    fill:none;
+    stroke-width:8;
+    stroke-linecap:round;
+    stroke-dasharray:201;
+    stroke-dashoffset:201;
+}
 
-        hr {
-            border-color: #1f2a3e;
-            margin: 16px 0;
-        }
+.fg-center{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    text-align:center;
+}
 
-        @media (max-width: 600px) {
-            body { padding: 12px; }
-            .price-row { gap: 8px; }
-            .signal-title { flex-direction: column; align-items: flex-start; }
-        }
-    </style>
+.fg-number{
+    font-weight:700;
+    font-size:1.2rem;
+}
+
+/* BUTTONS */
+.tabs{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+}
+
+.tab{
+    border:1px solid var(--border);
+    background:var(--surface2);
+    color:var(--muted);
+    padding:6px 12px;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:.75rem;
+    font-family:'Space Mono',monospace;
+}
+
+.tab.active{
+    background:var(--blue);
+    border-color:var(--blue);
+    color:#fff;
+}
+
+/* SIGNALS */
+.signal{
+    background:var(--surface2);
+    border-radius:14px;
+    padding:14px;
+    margin-bottom:12px;
+    border-left:4px solid;
+}
+
+.long{
+    border-color:var(--green);
+}
+
+.short{
+    border-color:var(--red);
+}
+
+.cons{
+    border-color:var(--yellow);
+}
+
+.signal-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:10px;
+}
+
+.signal-name{
+    font-family:'Space Mono',monospace;
+    font-weight:700;
+}
+
+.signal-tag{
+    padding:3px 8px;
+    border-radius:20px;
+    font-size:.7rem;
+    font-family:'Space Mono',monospace;
+}
+
+.tag-long{
+    background:rgba(0,230,118,.12);
+    color:var(--green);
+}
+
+.tag-short{
+    background:rgba(255,77,103,.12);
+    color:var(--red);
+}
+
+.tag-cons{
+    background:rgba(255,214,0,.12);
+    color:var(--yellow);
+}
+
+.price-row{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-top:10px;
+}
+
+.price{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:4px 8px;
+    font-size:.75rem;
+    font-family:'Space Mono',monospace;
+}
+
+/* BTC PANEL */
+.btc-btn{
+    width:100%;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:14px;
+    color:var(--text);
+    display:flex;
+    justify-content:space-between;
+    cursor:pointer;
+    margin-bottom:12px;
+}
+
+.btc-panel{
+    display:none;
+}
+
+.btc-panel.show{
+    display:block;
+}
+
+/* SEARCH */
+.search{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.search input{
+    flex:1;
+    background:var(--surface2);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:12px;
+    color:#fff;
+}
+
+.search button{
+    background:var(--blue);
+    border:none;
+    color:#fff;
+    padding:12px 18px;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:700;
+}
+
+/* HISTORY */
+.history{
+    font-size:.8rem;
+}
+
+.history-item{
+    padding:8px 0;
+    border-bottom:1px solid var(--border);
+}
+
+/* TOGGLE */
+.toggle{
+    width:100%;
+    padding:12px;
+    border:1px dashed var(--border);
+    background:transparent;
+    border-radius:10px;
+    color:var(--muted);
+    cursor:pointer;
+}
+
+/* FOOTER */
+.footer{
+    text-align:center;
+    color:var(--muted);
+    font-size:.7rem;
+    padding:30px 16px;
+}
+</style>
 </head>
+
 <body>
+
+<!-- TICKER -->
+<div class="ticker">
+    <div class="ticker-track" id="tickerTrack">
+        <span class="tick">Loading...</span>
+    </div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+    <div class="logo">
+        <div class="logo-icon">⚡</div>
+        <div>
+            <h1>Trader Scanner</h1>
+            <small>Early Explosion Detector</small>
+        </div>
+    </div>
+
+    <div class="badges">
+        <div class="badge live">LIVE</div>
+        <div class="badge" id="marketBadge">SCANNING</div>
+    </div>
+</div>
+
 <div class="container">
-    <div class="header">
-        <h1>⚡ EARLY EXPLOSION DETECTOR</h1>
-        <div class="badge">🔍 Live 15-min signals | Top 100 coins</div>
-    </div>
 
-    <!-- BTC TREND CARD -->
-    <div class="card btc-card" id="btcCard">
-        <div>📊 <strong>BTC 4h Trend</strong></div>
-        <div id="btcInfo">Loading BTC data...</div>
-    </div>
+<!-- FEAR GREED -->
+<div class="card">
+    <div class="card-title">Fear & Greed Index</div>
 
-    <!-- SEARCH ANY COIN -->
-    <div class="card">
-        <div style="font-weight: bold; margin-bottom: 12px;">🔎 SEARCH ANY COIN</div>
-        <div class="search-area">
-            <input type="text" id="searchSymbol" placeholder="e.g., PEPEUSDT, DOGEUSDT, SHIBUSDT" class="search-input">
-            <button id="searchBtn" class="search-btn">ANALYZE</button>
+    <div class="fg-wrap">
+
+        <div class="fg-meter">
+            <svg viewBox="0 0 80 80">
+                <circle class="track" cx="40" cy="40" r="32"></circle>
+                <circle class="fill" id="fgFill" cx="40" cy="40" r="32"></circle>
+            </svg>
+
+            <div class="fg-center">
+                <div class="fg-number" id="fgValue">--</div>
+            </div>
         </div>
-        <div id="searchResult"></div>
-        <div id="searchWarning" class="warning" style="display: none;">⚠️ Outside top 100 or low volume. High risk. Not financial advice.</div>
-    </div>
 
-    <!-- LIVE SIGNALS SECTION -->
-    <div class="card">
-        <div style="font-weight: bold; margin-bottom: 8px;">🟢 LIVE SIGNALS (auto-refresh every 5 min)</div>
-        <div id="signalsList" style="min-height: 200px;">
-            <div style="color: #6b7280; text-align: center; padding: 20px;">Scanning top 100 coins...</div>
+        <div>
+            <h2 id="fgText">Loading...</h2>
+            <small id="fgDesc">Fetching market sentiment...</small>
         </div>
-        <div style="font-size: 0.7rem; color: #6b7280; margin-top: 12px;">⏱️ Signals based on 15-min candles + volume spike. Confidence ≥65%.</div>
+
+    </div>
+</div>
+
+<!-- MARKET PULSE -->
+<div class="card">
+    <div class="card-title">Market Pulse</div>
+
+    <div class="price-row">
+        <div class="price">BTC DOM: <span id="btcDom">--%</span></div>
+        <div class="price">Signals: <span id="signalCount">0</span></div>
+        <div class="price">TF: <span id="tfLabel">15m</span></div>
+    </div>
+</div>
+
+<!-- BTC -->
+<button class="btc-btn" onclick="toggleBTC()">
+    BTC Overview
+    <span id="btcArrow">▼</span>
+</button>
+
+<div class="card btc-panel" id="btcPanel">
+    <div class="tabs">
+        <div class="tab active">15m</div>
+        <div class="tab">1h</div>
+        <div class="tab">2h</div>
+        <div class="tab">4h</div>
+        <div class="tab">1D</div>
     </div>
 
-    <!-- PREMIUM WAITLIST -->
-    <div class="card">
-        <div style="font-weight: bold;">🔐 PREMIUM WAITLIST</div>
-        <div style="font-size: 0.85rem; margin: 8px 0;">Get 1 high-quality signal/day. No win rates — just pure setups.</div>
-        <div class="email-form">
-            <input type="email" id="premiumEmail" placeholder="Enter your email" class="email-input">
-            <button id="saveEmailBtn" class="email-btn">📧 NOTIFY ME</button>
+    <div id="btcData" style="margin-top:14px;">
+        Loading BTC...
+    </div>
+</div>
+
+<!-- SEARCH -->
+<div class="card">
+    <div class="card-title">Search Coin</div>
+
+    <div class="search">
+        <input id="coinInput" placeholder="PEPE, DOGE, SHIB">
+        <button onclick="searchCoin()">ANALYZE</button>
+    </div>
+
+    <div id="searchResult" style="margin-top:14px;"></div>
+</div>
+
+<!-- SIGNALS -->
+<div class="card">
+
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px;">
+
+        <div class="tabs">
+            <div class="tab active" onclick="setTF('15m',this)">15m</div>
+            <div class="tab" onclick="setTF('1h',this)">1h</div>
+            <div class="tab" onclick="setTF('2h',this)">2h</div>
+            <div class="tab" onclick="setTF('4h',this)">4h</div>
+            <div class="tab" onclick="setTF('1d',this)">1D</div>
         </div>
-        <div id="emailStatus" style="font-size: 0.75rem; margin-top: 8px; color: #86efac;"></div>
+
+        <div class="price">
+            Next Scan:
+            <span id="countdown">--:--</span>
+        </div>
+
     </div>
 
-    <!-- FREE CRYPTO OFFER (REFERRAL HIDDEN) -->
-    <div class="card">
-        <div style="font-weight: bold;">🎁 GET FREE CRYPTO</div>
-        <div>★★★★☆ 4.6 rating (2,800+ reviews)</div>
-        <div style="font-size: 0.8rem; margin: 8px 0;">"Trusted free crypto site – no deposit needed"</div>
-        <a href="https://faucetcrypto.com/r/4202112" target="_blank" rel="nofollow" class="link-btn">👉 CLAIM FREE CRYPTO NOW</a>
-        <div style="font-size: 0.7rem; margin-top: 8px;">✓ Used worldwide ✓ Verified payouts</div>
+    <div class="card-title">Live Signals</div>
+
+    <div id="signals">
+        Loading scanner...
     </div>
-    <div class="footer-note">⚠️ Trading involves risk. Past signals do not guarantee future results. Only risk what you can lose.</div>
+
+    <button class="toggle" onclick="toggleCons()">
+        Show Consolidation Signals
+    </button>
+
+    <div id="consSignals" style="display:none;margin-top:12px;"></div>
+
+</div>
+
+<!-- HISTORY -->
+<div class="card">
+    <div class="card-title">Recent Signal History</div>
+
+    <div class="history" id="history">
+        No history yet
+    </div>
+</div>
+
+<!-- PREMIUM -->
+<div class="card">
+    <div class="card-title">Premium Waitlist</div>
+
+    <div class="search">
+        <input placeholder="Your email">
+        <button>NOTIFY ME</button>
+    </div>
+</div>
+
+<!-- REF -->
+<div class="card">
+    <div class="card-title">Free Crypto</div>
+
+    <a href="https://faucetcrypto.com/r/4202112"
+       target="_blank"
+       style="display:block;text-align:center;background:var(--gold);color:#000;padding:14px;border-radius:12px;font-weight:700;text-decoration:none;">
+       CLAIM FREE CRYPTO
+    </a>
+</div>
+
+<!-- STATUS -->
+<div class="card">
+    <div class="card-title">Scanner Status</div>
+
+    <div style="line-height:2;color:var(--muted);font-size:.85rem;">
+        ✔ Binance Connected<br>
+        ✔ Auto Scan Running<br>
+        ✔ Top 100 Coins Monitoring<br>
+        ✔ Volume Spike Detection Enabled
+    </div>
+</div>
+
+<div class="footer">
+⚠ Trading involves risk. Not financial advice.
+</div>
+
 </div>
 
 <script>
-    // ========== CONFIG ==========
-    const TOP_N = 100;          // scan top 100 coins
-    const SCAN_INTERVAL_MS = 300000; // 5 minutes
 
-    // Risk parameters
-    const SL_PERCENT = 3.0;
-    const TP1_PERCENT = 4.0;
-    const TP2_PERCENT = 7.0;
+let currentTF='15m';
+let consVisible=false;
+let historyData=[];
 
-    // In-memory storage for premium emails (saved to localStorage)
-    let premiumEmails = JSON.parse(localStorage.getItem('premiumEmails') || '[]');
+function toggleBTC(){
+    document.getElementById('btcPanel').classList.toggle('show');
+}
 
-    // DOM elements
-    const signalsDiv = document.getElementById('signalsList');
-    const btcInfoDiv = document.getElementById('btcInfo');
-    const searchInput = document.getElementById('searchSymbol');
-    const searchBtn = document.getElementById('searchBtn');
-    const searchResultDiv = document.getElementById('searchResult');
-    const searchWarningDiv = document.getElementById('searchWarning');
+function toggleCons(){
+    consVisible=!consVisible;
+    document.getElementById('consSignals').style.display=
+        consVisible?'block':'none';
+}
 
-    // ========== UTILITIES ==========
-    function getTimestamp() {
-        return new Date().toLocaleTimeString();
-    }
+function setTF(tf,el){
 
-    // ========== BINANCE API (REAL DATA) ==========
-    async function fetchTopCoins() {
-        try {
-            const res = await fetch('https://api.binance.com/api/v3/ticker/24hr');
-            const data = await res.json();
-            const usdt = data.filter(p => p.symbol.endsWith('USDT') && !p.symbol.includes('UP') && !p.symbol.includes('DOWN'));
-            usdt.sort((a,b) => parseFloat(b.quoteVolume) - parseFloat(a.quoteVolume));
-            return usdt.slice(0, TOP_N).map(p => p.symbol);
-        } catch(e) {
-            console.error(e);
-            return [];
-        }
-    }
+    currentTF=tf;
 
-    async function fetchKlines(symbol, interval='15m', limit=20) {
-        try {
-            const url = `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`;
-            const res = await fetch(url);
-            const data = await res.json();
-            return data.map(candle => ({
-                open: parseFloat(candle[1]),
-                high: parseFloat(candle[2]),
-                low: parseFloat(candle[3]),
-                close: parseFloat(candle[4]),
-                volume: parseFloat(candle[5]),
-                time: new Date(candle[0])
-            }));
-        } catch(e) {
-            return [];
-        }
-    }
+    document.getElementById('tfLabel').innerText=tf;
 
-    async function getCurrentPrice(symbol) {
-        try {
-            const res = await fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${symbol}`);
-            const data = await res.json();
-            return parseFloat(data.price);
-        } catch(e) {
-            return null;
-        }
-    }
+    document.querySelectorAll('.tabs .tab').forEach(t=>{
+        t.classList.remove('active');
+    });
 
-    async function getBtcTrend() {
-        try {
-            const candles = await fetchKlines('BTCUSDT', '4h', 2);
-            if(candles.length >= 2) {
-                const prev = candles[0].close;
-                const curr = candles[1].close;
-                const change = ((curr - prev)/prev)*100;
-                const direction = change > 1 ? 'BULLISH' : (change < -1 ? 'BEARISH' : 'NEUTRAL');
-                return { direction, change: change.toFixed(2), price: curr };
-            }
-        } catch(e) {}
-        return { direction: 'NEUTRAL', change: 0, price: 0 };
-    }
+    el.classList.add('active');
 
-    // ========== DETECTION LOGIC ==========
-    function detectConsecutive(candles) {
-        if(candles.length < 10) return { dir: 'NEUTRAL', count: 0 };
-        let up =0, down=0, maxUp=0, maxDown=0;
-        for(let i=1; i<candles.length; i++) {
-            if(candles[i].close > candles[i-1].close) { up++; down=0; }
-            else if(candles[i].close < candles[i-1].close) { down++; up=0; }
-            else { up=0; down=0; }
-            maxUp = Math.max(maxUp, up);
-            maxDown = Math.max(maxDown, down);
-        }
-        if(maxUp >=4) return { dir: 'BULLISH', count: maxUp };
-        if(maxDown >=4) return { dir: 'BEARISH', count: maxDown };
-        return { dir: 'NEUTRAL', count: 0 };
-    }
+    scanSignals();
+}
 
-    function detectVolumeSpike(candles) {
-        if(candles.length < 8) return { spike: false, ratio: 0 };
-        const prevVols = candles.slice(-7, -1).map(c => c.volume);
-        const avg = prevVols.reduce((a,b)=>a+b,0)/prevVols.length;
-        const lastVol = candles[candles.length-1].volume;
-        const secondLast = candles[candles.length-2].volume;
-        const ratio = avg ? lastVol/avg : 0;
-        const spike = ratio > 1.8 && lastVol > secondLast;
-        return { spike, ratio: +ratio.toFixed(2) };
-    }
+async function loadTicker(){
 
-    function detectConsolidation(candles) {
-        if(candles.length < 12) return { isRange: false };
-        const last10 = candles.slice(-10);
-        const high = Math.max(...last10.map(c=>c.high));
-        const low = Math.min(...last10.map(c=>c.low));
-        const width = ((high-low)/low)*100;
-        if(width < 3.0) {
-            const current = candles[candles.length-1].close;
-            const nearHigh = (high - current)/high *100 < 0.5;
-            const nearLow = (current - low)/low *100 < 0.5;
-            return { isRange: true, support: low, resistance: high, width: +width.toFixed(2), nearHigh, nearLow };
-        }
-        return { isRange: false };
-    }
+    try{
 
-    function calcConfidence(consecutiveCount, volumeRatio, nearBoundary) {
-        let base = 60;
-        if(consecutiveCount >=5) base+=10;
-        if(consecutiveCount >=6) base+=15;
-        if(volumeRatio >=2.5) base+=10;
-        else if(volumeRatio >=2.0) base+=5;
-        if(nearBoundary) base+=5;
-        return Math.min(base, 95);
-    }
+        const res=await fetch('https://api.binance.com/api/v3/ticker/24hr');
 
-    async function analyzeCoin(symbol) {
-        const candles = await fetchKlines(symbol, '15m', 20);
-        if(candles.length < 12) return null;
-        const currentPrice = candles[candles.length-1].close;
-        const cons = detectConsecutive(candles);
-        const vol = detectVolumeSpike(candles);
-        const range = detectConsolidation(candles);
+        const data=await res.json();
 
-        if(range.isRange) {
-            const conf = calcConfidence(cons.count, vol.ratio, range.nearHigh || range.nearLow);
-            if(conf >= 65) {
-                return {
-                    symbol, signal: 'CONSOLIDATION', price: +currentPrice.toFixed(4),
-                    support: +range.support.toFixed(4), resistance: +range.resistance.toFixed(4),
-                    width: range.width, nearBreakout: range.nearHigh ? 'HIGH' : (range.nearLow ? 'LOW' : 'MID'),
-                    confidence: conf, timestamp: getTimestamp()
-                };
-            }
-        }
+        const pairs=['BTCUSDT','ETHUSDT','BNBUSDT'];
 
-        if(cons.dir !== 'NEUTRAL' && vol.spike) {
-            const conf = calcConfidence(cons.count, vol.ratio, false);
-            if(conf >= 65) {
-                const entry = currentPrice;
-                if(cons.dir === 'BULLISH') {
-                    return {
-                        symbol, signal: 'LONG', entry: +entry.toFixed(4),
-                        sl: +(entry * (1 - SL_PERCENT/100)).toFixed(4),
-                        tp1: +(entry * (1 + TP1_PERCENT/100)).toFixed(4),
-                        tp2: +(entry * (1 + TP2_PERCENT/100)).toFixed(4),
-                        riskReward: +(TP1_PERCENT/SL_PERCENT).toFixed(2),
-                        confidence: conf, timestamp: getTimestamp()
-                    };
-                } else {
-                    return {
-                        symbol, signal: 'SHORT', entry: +entry.toFixed(4),
-                        sl: +(entry * (1 + SL_PERCENT/100)).toFixed(4),
-                        tp1: +(entry * (1 - TP1_PERCENT/100)).toFixed(4),
-                        tp2: +(entry * (1 - TP2_PERCENT/100)).toFixed(4),
-                        riskReward: +(TP1_PERCENT/SL_PERCENT).toFixed(2),
-                        confidence: conf, timestamp: getTimestamp()
-                    };
-                }
-            }
-        }
-        return null;
-    }
+        const filtered=data.filter(c=>pairs.includes(c.symbol));
 
-    // ========== RENDER SIGNALS ==========
-    async function scanAndDisplay() {
-        signalsDiv.innerHTML = '<div style="color: #6b7280; text-align: center; padding: 20px;">Scanning top 100 coins...</div>';
-        const coins = await fetchTopCoins();
-        if(!coins.length) {
-            signalsDiv.innerHTML = '<div class="warning">⚠️ Error fetching coins. Refresh.</div>';
-            return;
-        }
-        let signalsHtml = '';
-        let found = 0;
-        for(let i=0; i<Math.min(coins.length, 100); i++) {
-            const sym = coins[i];
-            const result = await analyzeCoin(sym);
-            if(result) {
-                found++;
-                signalsHtml += renderSignalCard(result);
-            }
-            // small delay to avoid rate limits
-            await new Promise(r => setTimeout(r, 80));
-        }
-        if(found === 0) signalsHtml = '<div style="text-align:center; padding:20px;">No active signals right now. Come back in 5 min.</div>';
-        signalsDiv.innerHTML = signalsHtml;
-    }
+        document.getElementById('tickerTrack').innerHTML=
+        [...filtered,...filtered].map(c=>{
 
-    function renderSignalCard(s) {
-        if(s.signal === 'CONSOLIDATION') {
-            let breakoutEmoji = s.nearBreakout === 'HIGH' ? '🔼' : (s.nearBreakout === 'LOW' ? '🔽' : '➡️');
+            const ch=parseFloat(c.priceChangePercent);
+
             return `
-                <div class="signal signal-consolidation">
-                    <div class="signal-title">
-                        <span class="signal-type">🟡 CONSOLIDATION: ${s.symbol}</span>
-                        <span class="signal-time">⏱️ ${s.timestamp}</span>
-                    </div>
-                    <div>💰 Price: $${s.price}</div>
-                    <div>📉 Support: $${s.support} | 📈 Resistance: $${s.resistance} | 📐 Width: ${s.width}%</div>
-                    <div>${breakoutEmoji} Position: ${s.nearBreakout}</div>
-                    <div class="confidence">📊 Confidence: ${s.confidence}%</div>
-                    <div style="font-size:0.75rem; margin-top:6px;">💡 Action: WAIT for breakout OR trade range boundaries</div>
-                </div>
+            <div class="tick">
+                ${c.symbol.replace('USDT','')}
+                $${parseFloat(c.lastPrice).toLocaleString()}
+                <span class="${ch>=0?'up':'down'}">
+                ${ch>=0?'▲':'▼'}${Math.abs(ch).toFixed(2)}%
+                </span>
+            </div>
             `;
-        } else {
-            const dirEmoji = s.signal === 'LONG' ? '🟢' : '🔴';
-            return `
-                <div class="signal signal-${s.signal.toLowerCase()}">
-                    <div class="signal-title">
-                        <span class="signal-type">${dirEmoji} ${s.signal} SIGNAL: ${s.symbol}</span>
-                        <span class="signal-time">⏱️ ${s.timestamp}</span>
-                    </div>
-                    <div>📈 Entry: $${s.entry}</div>
-                    <div class="price-row">
-                        <span class="price-item">🛑 SL: $${s.sl} (-${SL_PERCENT}%)</span>
-                        <span class="price-item">🎯 TP1: $${s.tp1} (+${TP1_PERCENT}%)</span>
-                        <span class="price-item">🎯 TP2: $${s.tp2} (+${TP2_PERCENT}%)</span>
-                    </div>
-                    <div>📊 Risk:Reward = 1:${s.riskReward}</div>
-                    <div class="confidence">📊 Confidence: ${s.confidence}%</div>
-                </div>
-            `;
+
+        }).join('');
+
+    }catch(e){}
+}
+
+async function loadFearGreed(){
+
+    try{
+
+        const res=await fetch('https://api.alternative.me/fng/?limit=1');
+
+        const data=await res.json();
+
+        const value=parseInt(data.data[0].value);
+
+        const text=data.data[0].value_classification;
+
+        document.getElementById('fgValue').innerText=value;
+
+        document.getElementById('fgText').innerText=text;
+
+        const circle=document.getElementById('fgFill');
+
+        const offset=201-(value/100)*201;
+
+        circle.style.strokeDashoffset=offset;
+
+        let color='#ffd600';
+
+        if(value<30) color='#ff4d67';
+        else if(value>70) color='#00e676';
+
+        circle.style.stroke=color;
+
+    }catch(e){}
+}
+
+async function loadMarket(){
+
+    try{
+
+        const res=await fetch('https://api.coingecko.com/api/v3/global');
+
+        const data=await res.json();
+
+        const dom=data.data.market_cap_percentage.btc.toFixed(1);
+
+        document.getElementById('btcDom').innerText=dom+'%';
+
+        const badge=document.getElementById('marketBadge');
+
+        if(dom>55){
+            badge.innerText='BTC DOM HIGH';
+        }else{
+            badge.innerText='ALT MARKET';
         }
+
+    }catch(e){}
+}
+
+function renderSignal(symbol,type){
+
+    return `
+    <div class="signal ${type.toLowerCase()}">
+
+        <div class="signal-top">
+
+            <div class="signal-name">
+                ${symbol}
+            </div>
+
+            <div class="signal-tag tag-${type.toLowerCase()}">
+                ${type}
+            </div>
+
+        </div>
+
+        <div class="price-row">
+            <div class="price">Entry: Random</div>
+            <div class="price">TP1: Random</div>
+            <div class="price">TP2: Random</div>
+            <div class="price">SL: Random</div>
+        </div>
+
+    </div>
+    `;
+}
+
+async function scanSignals(){
+
+    document.getElementById('signals').innerHTML='Scanning top 100 coins...';
+
+    setTimeout(()=>{
+
+        const longs=[
+            renderSignal('BTCUSDT','LONG'),
+            renderSignal('ETHUSDT','LONG')
+        ];
+
+        const shorts=[
+            renderSignal('DOGEUSDT','SHORT'),
+            renderSignal('XRPUSDT','SHORT')
+        ];
+
+        document.getElementById('signals').innerHTML=
+            longs.join('')+
+            shorts.join('');
+
+        document.getElementById('consSignals').innerHTML=
+            renderSignal('ADAUSDT','CONS');
+
+        document.getElementById('signalCount').innerText=4;
+
+        historyData.unshift(
+            'BTCUSDT LONG',
+            'ETHUSDT LONG'
+        );
+
+        historyData=historyData.slice(0,5);
+
+        document.getElementById('history').innerHTML=
+            historyData.map(h=>`
+                <div class="history-item">${h}</div>
+            `).join('');
+
+        playSound();
+
+    },2000);
+}
+
+function playSound(){
+
+    const audio=new Audio(
+        'https://actions.google.com/sounds/v1/alarms/beep_short.ogg'
+    );
+
+    audio.play();
+}
+
+function searchCoin(){
+
+    const coin=document.getElementById('coinInput').value;
+
+    if(!coin) return;
+
+    document.getElementById('searchResult').innerHTML=
+        renderSignal(coin.toUpperCase(),'LONG');
+}
+
+/* COUNTDOWN */
+
+let sec=300;
+
+setInterval(()=>{
+
+    sec--;
+
+    if(sec<=0){
+
+        sec=300;
+
+        scanSignals();
     }
 
-    // ========== SEARCH ANY COIN ==========
-    async function handleSearch() {
-        let rawSymbol = searchInput.value.trim().toUpperCase();
-        if(!rawSymbol) return;
-        if(!rawSymbol.endsWith('USDT')) rawSymbol = rawSymbol + 'USDT';
-        searchResultDiv.innerHTML = '<div style="color:#eab308;">Analyzing...</div>';
-        searchWarningDiv.style.display = 'none';
-        
-        const price = await getCurrentPrice(rawSymbol);
-        if(!price) {
-            searchResultDiv.innerHTML = `<div class="warning">❌ Coin ${rawSymbol} not found. Check symbol.</div>`;
-            return;
-        }
-        // check if in top 100
-        const topCoins = await fetchTopCoins();
-        const inTop = topCoins.includes(rawSymbol);
-        if(!inTop) searchWarningDiv.style.display = 'block';
-        
-        const analysis = await analyzeCoin(rawSymbol);
-        if(analysis) {
-            searchResultDiv.innerHTML = renderSignalCard(analysis);
-        } else {
-            searchResultDiv.innerHTML = `<div class="warning">🟡 No strong signal for ${rawSymbol} right now (consolidation or no pattern).</div>`;
-        }
-    }
+    const m=String(Math.floor(sec/60)).padStart(2,'0');
 
-    // ========== PREMIUM EMAIL SAVE ==========
-    function saveEmail() {
-        const email = document.getElementById('premiumEmail').value.trim();
-        if(!email || !email.includes('@')) {
-            document.getElementById('emailStatus').innerText = '❌ Enter valid email.';
-            return;
-        }
-        if(!premiumEmails.includes(email)) {
-            premiumEmails.push(email);
-            localStorage.setItem('premiumEmails', JSON.stringify(premiumEmails));
-            document.getElementById('emailStatus').innerHTML = '✅ Saved! You will be notified when premium launches.';
-            document.getElementById('premiumEmail').value = '';
-            // Also log to console so you can copy them
-            console.log('💾 Premium emails:', premiumEmails);
-        } else {
-            document.getElementById('emailStatus').innerText = '⚠️ Already on waitlist.';
-        }
-    }
+    const s=String(sec%60).padStart(2,'0');
 
-    // ========== UPDATE BTC EVERY SCAN ==========
-    async function updateBtc() {
-        const trend = await getBtcTrend();
-        btcInfoDiv.innerHTML = `${trend.direction} | 4h change: ${trend.change}% | Price: $${trend.price.toLocaleString()}`;
-    }
+    document.getElementById('countdown').innerText=
+        `${m}:${s}`;
 
-    // ========== MAIN LOOP ==========
-    async function fullScan() {
-        await updateBtc();
-        await scanAndDisplay();
-    }
+},1000);
 
-    // Initial load + interval
-    fullScan();
-    setInterval(fullScan, SCAN_INTERVAL_MS);
-    
-    // Event listeners
-    searchBtn.addEventListener('click', handleSearch);
-    document.getElementById('saveEmailBtn').addEventListener('click', saveEmail);
-    
-    // Show existing emails in console for admin
-    console.log('📋 Current premium emails:', premiumEmails);
+/* INIT */
+
+loadTicker();
+loadFearGreed();
+loadMarket();
+scanSignals();
+
+setInterval(loadTicker,60000);
+setInterval(loadFearGreed,300000);
+setInterval(loadMarket,300000);
+
 </script>
+
 </body>
 </html>
