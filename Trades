@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trader Scanner</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+--bg:#060a12;
+--surface:#0d1320;
+--surface2:#111c2e;
+--border:#1a2740;
+--text:#e8eef8;
+--muted:#7b8aa6;
+--gold:#f0b90b;
+--green:#00e676;
+--red:#ff4d67;
+--blue:#2979ff;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+background:var(--bg);
+color:var(--text);
+font-family:'DM Sans',sans-serif;
+}
+
+.container{
+max-width:900px;
+margin:auto;
+padding:16px;
+padding-bottom:120px;
+}
+
+/* HEADER */
+.header{
+position:sticky;
+top:0;
+background:rgba(6,10,18,.95);
+backdrop-filter:blur(10px);
+border-bottom:1px solid var(--border);
+padding:14px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+z-index:10;
+}
+
+/* CARD */
+.card{
+background:var(--surface);
+border:1px solid var(--border);
+border-radius:16px;
+padding:16px;
+margin-bottom:14px;
+}
+
+.title{
+font-size:.75rem;
+color:var(--muted);
+font-family:'Space Mono',monospace;
+margin-bottom:10px;
+}
+
+/* SIGNAL BOX */
+.signal{
+padding:16px;
+border-radius:14px;
+background:var(--surface2);
+border-left:4px solid var(--green);
+font-family:'Space Mono',monospace;
+}
+
+.signal.short{border-left-color:var(--red);}
+
+/* FLOATING MENU */
+.floating{
+position:fixed;
+bottom:18px;
+left:50%;
+transform:translateX(-50%);
+display:flex;
+gap:10px;
+background:rgba(13,19,32,.9);
+padding:10px;
+border:1px solid var(--border);
+border-radius:16px;
+backdrop-filter:blur(12px);
+}
+
+.fbtn{
+font-size:.75rem;
+padding:8px 10px;
+border-radius:10px;
+background:var(--surface2);
+border:1px solid var(--border);
+color:var(--text);
+cursor:pointer;
+}
+
+.fbtn.active{
+background:var(--blue);
+}
+
+/* LIST */
+.item{
+display:flex;
+justify-content:space-between;
+padding:10px;
+background:var(--surface2);
+border-radius:10px;
+font-family:'Space Mono',monospace;
+font-size:.8rem;
+}
+
+/* FAUCET */
+.faucet{
+text-align:center;
+padding:14px;
+background:linear-gradient(135deg,#0d1a10,#0d1320);
+border:1px solid rgba(0,230,118,.2);
+border-radius:14px;
+}
+
+a{
+display:inline-block;
+margin-top:10px;
+background:var(--gold);
+padding:12px;
+border-radius:10px;
+color:#000;
+text-decoration:none;
+font-weight:700;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+<div>⚡ Trader Scanner</div>
+<div>LIVE</div>
+</div>
+
+<div class="container">
+
+<!-- BEST TRADE -->
+<div class="card">
+<div class="title">BEST TRADE SIGNAL</div>
+<div id="signalBox">Loading...</div>
+</div>
+
+<!-- DYNAMIC SECTION -->
+<div class="card">
+<div class="title" id="sectionTitle">SCALPING COINS</div>
+<div id="dynamicArea"></div>
+</div>
+
+<!-- FAUCET -->
+<div class="card faucet">
+<div class="title">EARN FREE CRYPTO</div>
+<div>Rating ⭐ 4.6 / 5</div>
+<a href="https://faucetcrypto.com/r/4202112" target="_blank">Claim Crypto</a>
+</div>
+
+</div>
+
+<!-- FLOATING BUTTONS -->
+<div class="floating">
+<button class="fbtn active" onclick="load('scalp',this)">Scalp</button>
+<button class="fbtn" onclick="load('up',this)">Up</button>
+<button class="fbtn" onclick="load('down',this)">Down</button>
+<button class="fbtn" onclick="load('early',this)">Early</button>
+</div>
+
+<script>
+
+let coins=["BTCUSDT","ETHUSDT","BNBUSDT","SOLUSDT","XRPUSDT","DOGEUSDT"];
+
+async function price(sym){
+let r=await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${sym}`);
+return await r.json();
+}
+
+/* BEST TRADE WITH INDICATOR */
+async function best(){
+
+let best=null;
+
+for(let c of coins){
+try{
+let d=await price(c);
+let ch=parseFloat(d.priceChangePercent);
+
+if(!best || Math.abs(ch) > Math.abs(best.change)){
+best={
+symbol:c,
+price:d.lastPrice,
+change:ch,
+type: ch>0 ? "LONG" : "SHORT"
+};
+}
+}catch(e){}
+}
+
+document.getElementById("signalBox").innerHTML=`
+<div class="signal ${best.type.toLowerCase()}">
+
+<div style="font-size:0.85rem;font-weight:700;margin-bottom:8px;">
+${best.symbol}
+</div>
+
+<div style="
+display:inline-block;
+padding:6px 10px;
+border-radius:20px;
+font-size:0.7rem;
+margin-bottom:10px;
+background:${best.type==="LONG"?"rgba(0,230,118,.15)":"rgba(255,77,103,.15)"};
+color:${best.type==="LONG"?"#00e676":"#ff4d67"};
+">
+${best.type} SIGNAL
+</div>
+
+<br>
+
+Entry: ${best.price}<br>
+SL: ${(best.price*0.98).toFixed(2)} | TP: ${(best.price*1.03).toFixed(2)}<br><br>
+
+${best.change>0?"+":""}${best.change.toFixed(2)}%
+
+</div>
+`;
+}
+
+/* BUTTON SYSTEM */
+async function load(type,btn){
+
+document.querySelectorAll(".fbtn").forEach(b=>b.classList.remove("active"));
+btn.classList.add("active");
+
+let list=[];
+
+for(let c of coins.slice(0,3)){
+try{
+let d=await price(c);
+
+if(type==="scalp"){
+list.push(`${c} | ${d.priceChangePercent}%`);
+}
+if(type==="up" && d.priceChangePercent>0){
+list.push(`${c} ↑ ${d.priceChangePercent}%`);
+}
+if(type==="down" && d.priceChangePercent<0){
+list.push(`${c} ↓ ${d.priceChangePercent}%`);
+}
+if(type==="early"){
+list.push(`${c} momentum`);
+}
+}catch(e){}
+}
+
+document.getElementById("dynamicArea").innerHTML=
+list.map(x=>`<div class="item">${x}</div>`).join("");
+
+document.getElementById("sectionTitle").innerText=
+type.toUpperCase();
+}
+
+/* INIT */
+best();
+load("scalp",document.querySelector(".fbtn"));
+
+setInterval(best,300000);
+
+</script>
+
+</body>
+</html>
