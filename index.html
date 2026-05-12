@@ -1,26 +1,24 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trader Scanner Pro</title>
+<title>Trader Scanner</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
 
 <style>
 
 :root{
---bg:#050816;
+--bg:#060a12;
 --surface:#0d1320;
---surface2:#131d30;
---border:#1f2b45;
---text:#edf3ff;
---muted:#7182a5;
+--surface2:#111c2e;
+--border:#1a2740;
+--text:#e8eef8;
+--muted:#7b8aa6;
 --green:#00e676;
 --red:#ff4d67;
 --gold:#f0b90b;
---blue:#2d7dff;
 }
 
 *{
@@ -33,125 +31,109 @@ body{
 background:var(--bg);
 color:var(--text);
 font-family:'DM Sans',sans-serif;
-overflow-x:hidden;
 }
 
-/* HEADER */
+.container{
+max-width:900px;
+margin:auto;
+padding:16px;
+padding-bottom:100px;
+}
 
 .header{
 position:sticky;
 top:0;
-z-index:1000;
-height:64px;
+z-index:999;
+background:rgba(6,10,18,.95);
+backdrop-filter:blur(10px);
+padding:14px 16px;
+border-bottom:1px solid var(--border);
 display:flex;
 align-items:center;
-justify-content:space-between;
-padding:0 18px;
-background:rgba(5,8,22,.96);
-backdrop-filter:blur(12px);
-border-bottom:1px solid var(--border);
+gap:14px;
+}
+
+.menu-btn{
+font-size:1.2rem;
+cursor:pointer;
+background:none;
+border:none;
+color:#fff;
 }
 
 .logo{
 font-weight:700;
-font-size:1.08rem;
+font-size:1rem;
 }
 
-.menu-btn{
-background:none;
-border:none;
-color:#fff;
-font-size:1.5rem;
-cursor:pointer;
-}
-
-/* SIDEBAR */
-
-.sidebar{
+.dropdown{
 position:fixed;
-top:0;
+top:60px;
 left:-320px;
-width:300px;
-height:100%;
-background:#0a1020;
+width:290px;
+height:100vh;
+background:var(--surface);
 border-right:1px solid var(--border);
-padding:18px;
+padding:16px;
 overflow-y:auto;
-transition:.3s;
-z-index:2000;
+transition:.35s;
+z-index:999;
 }
 
-.sidebar.active{
+.dropdown.open{
 left:0;
 }
 
-.side-title{
+.menu-title{
 font-size:.72rem;
 color:var(--muted);
-font-family:'Space Mono';
-margin:20px 0 10px;
+margin:18px 0 10px;
+font-family:'Space Mono',monospace;
 }
 
-.side-item{
+.menu-item{
 background:var(--surface2);
 padding:12px;
 border-radius:12px;
 margin-bottom:10px;
 cursor:pointer;
+font-size:.82rem;
+font-family:'Space Mono',monospace;
 transition:.2s;
-font-family:'Space Mono';
-font-size:.78rem;
-border:1px solid transparent;
 }
 
-.side-item:hover{
-border-color:var(--blue);
-transform:translateX(4px);
+.menu-item:hover{
+background:#182640;
 }
-
-.close-btn{
-font-size:1.3rem;
-background:none;
-border:none;
-color:#fff;
-cursor:pointer;
-margin-bottom:10px;
-}
-
-/* MAIN */
-
-.container{
-max-width:950px;
-margin:auto;
-padding:18px;
-padding-bottom:120px;
-}
-
-/* CARDS */
 
 .card{
 background:var(--surface);
 border:1px solid var(--border);
-border-radius:20px;
+border-radius:18px;
 padding:16px;
 margin-bottom:16px;
 }
 
-.card-title{
+.title{
 font-size:.72rem;
-font-family:'Space Mono';
+font-family:'Space Mono',monospace;
 color:var(--muted);
-margin-bottom:14px;
-letter-spacing:.5px;
+margin-bottom:12px;
 }
 
-/* MAIN SIGNAL */
-
-.signal-box{
-background:linear-gradient(145deg,#121b2e,#0c1424);
-border-radius:18px;
+.signal{
+background:var(--surface2);
+border-radius:16px;
 padding:18px;
-border:1px solid #1b2a48;
+border-left:4px solid var(--green);
+}
+
+.signal.short{
+border-left-color:var(--red);
+}
+
+.signal.cons{
+border-left-color:var(--gold);
 }
 
 .signal-top{
@@ -161,194 +143,164 @@ align-items:center;
 margin-bottom:14px;
 }
 
-.coin{
-font-size:1.2rem;
+.pair{
+font-size:1.1rem;
 font-weight:700;
 }
 
-.signal-badge{
-padding:7px 14px;
+.badge{
+padding:7px 12px;
 border-radius:30px;
-font-size:.75rem;
+font-size:.7rem;
 font-weight:700;
 }
 
 .long{
-background:rgba(0,230,118,.14);
+background:rgba(0,230,118,.15);
 color:var(--green);
 }
 
 .short{
-background:rgba(255,77,103,.14);
+background:rgba(255,77,103,.15);
 color:var(--red);
 }
 
 .cons{
-background:rgba(255,255,255,.08);
-color:#fff;
+background:rgba(240,185,11,.15);
+color:var(--gold);
 }
 
-/* GRID */
-
-.trade-grid{
+.levels{
 display:grid;
 grid-template-columns:repeat(3,1fr);
 gap:10px;
-margin-top:12px;
-}
-
-.trade-box{
-background:#09111f;
-border:1px solid var(--border);
-padding:12px;
-border-radius:12px;
-}
-
-.trade-label{
-font-size:.62rem;
-color:var(--muted);
-margin-bottom:5px;
-font-family:'Space Mono';
-}
-
-.trade-value{
-font-weight:700;
-font-size:.92rem;
-}
-
-/* EXTRA INFO */
-
-.extra-info{
-display:flex;
-justify-content:space-between;
-margin-top:14px;
-font-size:.8rem;
-color:var(--muted);
-font-family:'Space Mono';
-}
-
-/* REFRESH */
-
-.refresh-wrap{
 margin-top:16px;
 }
 
-.refresh-bar{
-height:4px;
-background:#17233b;
-border-radius:10px;
-overflow:hidden;
+.level{
+background:#09111d;
+border:1px solid var(--border);
+padding:10px;
+border-radius:12px;
+text-align:center;
 }
 
-.refresh-fill{
-height:100%;
-width:100%;
-background:linear-gradient(90deg,var(--green),#00c853);
-transition:width 1s linear;
-}
-
-.refresh-text{
-margin-top:8px;
-font-size:.7rem;
+.level small{
+display:block;
+font-size:.6rem;
 color:var(--muted);
-font-family:'Space Mono';
+margin-bottom:6px;
 }
 
-/* MARKET STRIP */
+.level strong{
+font-size:.86rem;
+}
 
-.market-strip{
+.stats{
 display:flex;
 gap:10px;
-overflow-x:auto;
-padding-bottom:4px;
+margin-top:14px;
+flex-wrap:wrap;
 }
 
-.market-strip::-webkit-scrollbar{
-display:none;
-}
-
-.market-item{
-min-width:130px;
-background:var(--surface2);
-border-radius:12px;
-padding:12px;
-border:1px solid var(--border);
-}
-
-.market-symbol{
+.stat{
+background:#09111d;
+padding:8px 10px;
+border-radius:10px;
 font-size:.72rem;
-color:var(--muted);
-margin-bottom:4px;
+font-family:'Space Mono',monospace;
 }
 
-.market-price{
-font-weight:700;
+.market{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
 }
 
-.market-change{
-margin-top:5px;
-font-size:.75rem;
-}
-
-/* TIPS */
-
-.tip-toggle{
+.market-box{
 background:var(--surface2);
 padding:14px;
-border-radius:12px;
-cursor:pointer;
-font-weight:600;
+border-radius:14px;
 }
 
-.tips{
-display:none;
-margin-top:12px;
+.market-box h3{
+font-size:.85rem;
+margin-bottom:8px;
+}
+
+.market-box p{
+font-size:.8rem;
+color:var(--muted);
+}
+
+.history-item{
+background:var(--surface2);
+padding:12px;
+border-radius:12px;
+margin-bottom:10px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+font-size:.8rem;
+font-family:'Space Mono',monospace;
 }
 
 .tip{
-padding:12px;
-background:#10192a;
-border-radius:12px;
+background:var(--surface2);
+padding:14px;
+border-radius:14px;
 margin-bottom:10px;
-line-height:1.5;
+cursor:pointer;
 }
 
-/* FAUCET */
+.tip-content{
+display:none;
+margin-top:10px;
+font-size:.86rem;
+line-height:1.6;
+color:var(--muted);
+}
 
 .faucet{
 text-align:center;
-background:linear-gradient(145deg,#0c1b12,#0d1320);
+background:linear-gradient(135deg,#0d1a10,#0d1320);
 }
 
 .claim-btn{
 display:inline-block;
-margin-top:14px;
+margin-top:12px;
+padding:12px 18px;
+border-radius:12px;
 background:var(--gold);
-padding:14px 20px;
-border-radius:14px;
-text-decoration:none;
 color:#000;
+text-decoration:none;
 font-weight:700;
 }
 
-/* HISTORY */
-
-.history-item{
-display:flex;
-justify-content:space-between;
-padding:10px;
-background:var(--surface2);
-border-radius:10px;
-margin-bottom:8px;
-font-family:'Space Mono';
+.countdown{
+margin-top:14px;
 font-size:.75rem;
+color:var(--muted);
+font-family:'Space Mono',monospace;
 }
 
-/* RESPONSIVE */
+.loading{
+animation:pulse 1s infinite;
+}
+
+@keyframes pulse{
+0%{opacity:.5;}
+50%{opacity:1;}
+100%{opacity:.5;}
+}
 
 @media(max-width:700px){
 
-.trade-grid{
+.levels{
+grid-template-columns:1fr;
+}
+
+.market{
 grid-template-columns:1fr;
 }
 
@@ -356,156 +308,138 @@ grid-template-columns:1fr;
 
 </style>
 </head>
-
 <body>
 
-<!-- HEADER -->
-
 <div class="header">
-
-<button class="menu-btn" onclick="openMenu()">☰</button>
-
-<div class="logo">
-Trader Scanner
+<button class="menu-btn" onclick="toggleMenu()">☰</button>
+<div class="logo">⚡ Trader Scanner</div>
 </div>
 
-</div>
+<div class="dropdown" id="menu">
 
-<!-- SIDEBAR -->
+<div class="menu-title">BULLISH MOMENTUM</div>
+<div id="bullishList"></div>
 
-<div class="sidebar" id="sidebar">
+<div class="menu-title">BEARISH MOMENTUM</div>
+<div id="bearishList"></div>
 
-<button class="close-btn" onclick="closeMenu()">✕</button>
-
-<div class="side-title">
-MARKET MODES
-</div>
-
-<div id="menuContent"></div>
+<div class="menu-title">EARLY DETECTION</div>
+<div id="earlyList"></div>
 
 </div>
-
-<!-- MAIN -->
 
 <div class="container">
 
-<!-- MAIN SIGNAL -->
+<div class="card">
+<div class="title">BEST TRADE SIGNAL</div>
+
+<div id="signalBox" class="loading">
+
+<div class="signal">
+
+<div class="signal-top">
+<div class="pair">Loading Pair...</div>
+<div class="badge cons">SCANNING</div>
+</div>
+
+<div class="levels">
+
+<div class="level">
+<small>ENTRY</small>
+<strong>--</strong>
+</div>
+
+<div class="level">
+<small>STOP LOSS</small>
+<strong>--</strong>
+</div>
+
+<div class="level">
+<small>TAKE PROFIT</small>
+<strong>--</strong>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="countdown">
+Refreshing in <span id="timer">120</span>s
+</div>
+
+</div>
 
 <div class="card">
 
-<div class="card-title">
-BEST TRADE SIGNAL
+<div class="title">MARKET OVERVIEW</div>
+
+<div class="market">
+
+<div class="market-box">
+<h3>BTCUSDT</h3>
+<p id="btcOverview">Loading...</p>
 </div>
 
-<div id="signalContainer">
-
-<div class="signal-box">
-
-Loading Binance Futures Scanner...
-
-</div>
-
-</div>
-
-<div class="refresh-wrap">
-
-<div class="refresh-bar">
-<div class="refresh-fill" id="refreshFill"></div>
-</div>
-
-<div class="refresh-text" id="refreshText">
-Refreshing in 120s
+<div class="market-box">
+<h3>ETHUSDT</h3>
+<p id="ethOverview">Loading...</p>
 </div>
 
 </div>
 
 </div>
-
-<!-- MARKET STRIP -->
 
 <div class="card">
 
-<div class="card-title">
-BINANCE FUTURES MARKET
-</div>
-
-<div class="market-strip" id="marketStrip">
-</div>
+<div class="title">RECENT SIGNALS</div>
+<div id="history"></div>
 
 </div>
-
-<!-- SIGNAL HISTORY -->
-
-<div class="card">
-
-<div class="card-title">
-RECENT SIGNALS
-</div>
-
-<div id="historyBox">
-</div>
-
-</div>
-
-<!-- TIPS -->
-
-<div class="card">
-
-<div class="card-title">
-TIPS TO MAKE MONEY IN CRYPTO
-</div>
-
-<div class="tip-toggle" onclick="toggleTips()">
-Click To Read Trading Tips
-</div>
-
-<div class="tips" id="tips">
-
-<div class="tip">
-Trade with strong trend direction instead of forcing random entries.
-</div>
-
-<div class="tip">
-Protect capital first. Consistency beats emotional trading.
-</div>
-
-<div class="tip">
-Never trade without stop loss in futures markets.
-</div>
-
-<div class="tip">
-Avoid overleveraging during high volatility sessions.
-</div>
-
-<div class="tip">
-Wait for volume confirmation before entering breakout trades.
-</div>
-
-</div>
-
-</div>
-
-<!-- FREE CRYPTO -->
 
 <div class="card faucet">
 
-<div class="card-title">
-EARN FREE CRYPTO
+<div class="title">EARN FREE CRYPTO</div>
+
+<div style="font-size:1rem;font-weight:700;">
+⭐ 4.6 / 5 Rating
 </div>
 
-<div style="font-size:1.1rem;font-weight:700;">
-⭐ Rating 4.6 / 5
-</div>
-
-<div style="margin-top:10px;color:var(--muted);">
+<div style="margin-top:8px;color:var(--muted);">
 Claim free crypto rewards daily.
 </div>
 
-<a href="https://faucetcrypto.com/r/4202112"
-target="_blank"
-class="claim-btn">
+<a href="https://faucetcrypto.com/r/4202112" target="_blank" class="claim-btn">
 Claim Free Crypto
 </a>
+
+</div>
+
+<div class="card">
+
+<div class="title">TIPS TO MAKE MONEY IN CRYPTO</div>
+
+<div class="tip" onclick="toggleTip(this)">
+<strong>Risk Management</strong>
+<div class="tip-content">
+Never risk your whole balance on one trade. Professional traders protect capital first.
+</div>
+</div>
+
+<div class="tip" onclick="toggleTip(this)">
+<strong>Trade Momentum</strong>
+<div class="tip-content">
+Focus on strong trending coins with volume and volatility instead of random hype coins.
+</div>
+</div>
+
+<div class="tip" onclick="toggleTip(this)">
+<strong>Use Stop Loss</strong>
+<div class="tip-content">
+Every serious trader uses stop loss. One bad trade should never destroy your account.
+</div>
+</div>
 
 </div>
 
@@ -513,38 +447,36 @@ Claim Free Crypto
 
 <script>
 
-let allCoins = [];
-let signalHistory = [];
-let countdown = 120;
-let activeMode = "all";
+const scanPairs = [
+"BTCUSDT",
+"ETHUSDT",
+"BNBUSDT",
+"SOLUSDT",
+"XRPUSDT",
+"DOGEUSDT",
+"1000PEPEUSDT",
+"WIFUSDT",
+"LINKUSDT",
+"AVAXUSDT"
+];
 
-/* MENU */
+let historyData = [];
 
-function openMenu(){
-document.getElementById("sidebar").classList.add("active");
+function toggleMenu(){
+document.getElementById("menu").classList.toggle("open");
 }
 
-function closeMenu(){
-document.getElementById("sidebar").classList.remove("active");
+function toggleTip(el){
+const content = el.querySelector(".tip-content");
+content.style.display =
+content.style.display === "block"
+? "none"
+: "block";
 }
-
-/* TIPS */
-
-function toggleTips(){
-let t = document.getElementById("tips");
-
-if(t.style.display==="block"){
-t.style.display="none";
-}else{
-t.style.display="block";
-}
-}
-
-/* FORMAT VOLUME */
 
 function formatVolume(v){
 
-v = parseFloat(v);
+v = Number(v);
 
 if(v >= 1000000000){
 return (v/1000000000).toFixed(2)+"B";
@@ -555,306 +487,277 @@ return (v/1000000).toFixed(2)+"M";
 }
 
 return v.toFixed(0);
+
 }
 
-/* FETCH */
-
-async function fetchData(){
+async function fetchMarket(){
 
 try{
 
-const res = await fetch(
-"https://api.binance.com/api/v3/ticker/24hr?ts="+Date.now()
-);
-
+const res = await fetch("https://api.binance.com/api/v3/ticker/24hr");
 const data = await res.json();
 
-allCoins = data
-.filter(c => c.symbol.endsWith("USDT"))
-.sort((a,b)=>
+const filtered = data.filter(c =>
+scanPairs.includes(c.symbol)
+);
+
+const ranked = filtered.sort((a,b)=>
 Math.abs(parseFloat(b.priceChangePercent))
 -
 Math.abs(parseFloat(a.priceChangePercent))
 );
 
-buildMarketStrip();
+renderMenus(ranked);
 
-buildMenu();
+const best = ranked[0];
 
-renderBestSignal();
+renderSignal(best);
 
-}catch(e){
+renderOverview(filtered);
 
-console.log(e);
-
+}catch(err){
+console.log(err);
 }
 
 }
 
-/* MARKET STRIP */
+function renderMenus(data){
 
-function buildMarketStrip(){
+const bullish = data
+.filter(x=>parseFloat(x.priceChangePercent)>0)
+.slice(0,2);
 
-const watch = [
-"BTCUSDT",
-"ETHUSDT",
-"BNBUSDT",
-"SOLUSDT",
-"XRPUSDT",
-"DOGEUSDT"
-];
+const bearish = data
+.filter(x=>parseFloat(x.priceChangePercent)<0)
+.slice(0,2);
 
-let html = "";
+const early = data
+.filter(x=>parseFloat(x.priceChangePercent)>2)
+.slice(0,2);
 
-watch.forEach(sym=>{
-
-let c = allCoins.find(x=>x.symbol===sym);
-
-if(!c) return;
-
-let ch = parseFloat(c.priceChangePercent);
-
-html += `
-<div class="market-item">
-
-<div class="market-symbol">
-${sym.replace("USDT","")}
-</div>
-
-<div class="market-price">
-${parseFloat(c.lastPrice).toFixed(2)}
-</div>
-
-<div class="market-change"
-style="color:${ch>=0?'#00e676':'#ff4d67'}">
-
-${ch>=0?'+':''}${ch.toFixed(2)}%
-
-</div>
-
-</div>
-`;
-
-});
-
-document.getElementById("marketStrip").innerHTML = html;
-
-}
-
-/* MENU */
-
-function buildMenu(){
-
-const bullish = allCoins
-.filter(c=>parseFloat(c.priceChangePercent)>0)
-.slice(0,5);
-
-const bearish = allCoins
-.filter(c=>parseFloat(c.priceChangePercent)<0)
-.slice(0,5);
-
-const early = allCoins
-.filter(c=>parseFloat(c.priceChangePercent)>2)
-.slice(0,5);
-
-function item(c){
-
-return `
-<div class="side-item"
-onclick="loadCoin('${c.symbol}')">
-
+document.getElementById("bullishList").innerHTML =
+bullish.map(c=>`
+<div class="menu-item">
 ${c.symbol}
-&nbsp;&nbsp;
-(${parseFloat(c.priceChangePercent).toFixed(2)}%)
-
+<br>
+<span style="color:var(--green)">
++${parseFloat(c.priceChangePercent).toFixed(2)}%
+</span>
 </div>
-`;
+`).join("");
+
+document.getElementById("bearishList").innerHTML =
+bearish.map(c=>`
+<div class="menu-item">
+${c.symbol}
+<br>
+<span style="color:var(--red)">
+${parseFloat(c.priceChangePercent).toFixed(2)}%
+</span>
+</div>
+`).join("");
+
+document.getElementById("earlyList").innerHTML =
+early.map(c=>`
+<div class="menu-item">
+${c.symbol}
+<br>
+Momentum Rising
+</div>
+`).join("");
 
 }
 
-document.getElementById("menuContent").innerHTML = `
+function renderSignal(best){
 
-<div class="side-title">
-🔥 BULLISH
-</div>
-
-${bullish.map(item).join("")}
-
-<div class="side-title">
-📉 BEARISH
-</div>
-
-${bearish.map(item).join("")}
-
-<div class="side-title">
-🚀 EARLY DETECTION
-</div>
-
-${early.map(item).join("")}
-
-`;
-
-}
-
-/* SIGNAL */
-
-function renderSignal(c){
-
-if(!c) return;
-
-let ch = parseFloat(c.priceChangePercent);
-
-let price = parseFloat(c.lastPrice);
+const change = parseFloat(best.priceChangePercent);
 
 let type = "CONSOLIDATION";
-let cls = "cons";
 
-if(ch > 0.4){
-type="LONG";
-cls="long";
+if(change > 1.5){
+type = "LONG";
 }
 
-if(ch < -0.4){
-type="SHORT";
-cls="short";
+if(change < -1.5){
+type = "SHORT";
 }
 
-let sl = price * 0.98;
-let tp = price * 1.03;
+const price = parseFloat(best.lastPrice);
 
-document.getElementById("signalContainer").innerHTML = `
+const sl =
+type==="LONG"
+? (price*0.985).toFixed(4)
+: (price*1.015).toFixed(4);
 
-<div class="signal-box">
+const tp =
+type==="LONG"
+? (price*1.03).toFixed(4)
+: (price*0.97).toFixed(4);
+
+const volume =
+formatVolume(best.quoteVolume);
+
+const badgeClass =
+type==="LONG"
+? "long"
+: type==="SHORT"
+? "short"
+: "cons";
+
+document.getElementById("signalBox").classList.remove("loading");
+
+document.getElementById("signalBox").innerHTML = `
+
+<div class="signal ${badgeClass}">
 
 <div class="signal-top">
 
-<div class="coin">
-${c.symbol}
+<div class="pair">
+${best.symbol}
 </div>
 
-<div class="signal-badge ${cls}">
+<div class="badge ${badgeClass}">
 ${type}
 </div>
 
 </div>
 
-<div class="trade-grid">
+<div class="levels">
 
-<div class="trade-box">
-<div class="trade-label">
-ENTRY
-</div>
-<div class="trade-value">
-${price.toFixed(4)}
-</div>
+<div class="level">
+<small>ENTRY</small>
+<strong>${price.toFixed(4)}</strong>
 </div>
 
-<div class="trade-box">
-<div class="trade-label">
-STOP LOSS
-</div>
-<div class="trade-value"
-style="color:var(--red)">
-${sl.toFixed(4)}
-</div>
+<div class="level">
+<small>STOP LOSS</small>
+<strong>${sl}</strong>
 </div>
 
-<div class="trade-box">
-<div class="trade-label">
-TAKE PROFIT
-</div>
-<div class="trade-value"
-style="color:var(--green)">
-${tp.toFixed(4)}
-</div>
+<div class="level">
+<small>TAKE PROFIT</small>
+<strong>${tp}</strong>
 </div>
 
 </div>
 
-<div class="extra-info">
+<div class="stats">
 
-<div>
-${ch>=0?'+':''}${ch.toFixed(2)}%
+<div class="stat">
+${change > 0 ? "+" : ""}
+${change.toFixed(2)}%
 </div>
 
-<div>
-Vol ${formatVolume(c.quoteVolume)}
+<div class="stat">
+VOL ${volume} USDT
+</div>
+
+<div class="stat">
+AI Momentum Active
+</div>
+
+<div class="stat">
+Whale Activity Detected
 </div>
 
 </div>
 
 </div>
-
 `;
 
-signalHistory.unshift(`
+addHistory(best.symbol,type,change);
+
+}
+
+function addHistory(pair,type,change){
+
+historyData.unshift({
+pair,
+type,
+change
+});
+
+historyData = historyData.slice(0,5);
+
+document.getElementById("history").innerHTML =
+historyData.map(h=>`
+
 <div class="history-item">
 
 <div>
-${c.symbol}
+${h.pair}
 </div>
 
-<div style="color:${ch>=0?'#00e676':'#ff4d67'}">
-${ch.toFixed(2)}%
+<div style="
+color:
+${h.type==="LONG"
+? "#00e676"
+: h.type==="SHORT"
+? "#ff4d67"
+: "#f0b90b"}
+">
+
+${h.type}
+
+</div>
+
+<div>
+${h.change>0?"+":""}
+${h.change.toFixed(2)}%
 </div>
 
 </div>
-`);
 
-signalHistory = signalHistory.slice(0,5);
-
-document.getElementById("historyBox").innerHTML =
-signalHistory.join("");
+`).join("");
 
 }
 
-/* LOAD COIN */
+function renderOverview(data){
 
-function loadCoin(sym){
+const btc = data.find(x=>x.symbol==="BTCUSDT");
+const eth = data.find(x=>x.symbol==="ETHUSDT");
 
-let c = allCoins.find(x=>x.symbol===sym);
+document.getElementById("btcOverview").innerHTML = `
+$${parseFloat(btc.lastPrice).toLocaleString()}
+<br><br>
+<span style="color:
+${parseFloat(btc.priceChangePercent)>=0
+? "#00e676"
+: "#ff4d67"}">
+${parseFloat(btc.priceChangePercent).toFixed(2)}%
+</span>
+`;
 
-renderSignal(c);
-
-closeMenu();
+document.getElementById("ethOverview").innerHTML = `
+$${parseFloat(eth.lastPrice).toLocaleString()}
+<br><br>
+<span style="color:
+${parseFloat(eth.priceChangePercent)>=0
+? "#00e676"
+: "#ff4d67"}">
+${parseFloat(eth.priceChangePercent).toFixed(2)}%
+</span>
+`;
 
 }
 
-/* BEST */
+fetchMarket();
 
-function renderBestSignal(){
+setInterval(fetchMarket,120000);
 
-if(!allCoins.length) return;
-
-renderSignal(allCoins[0]);
-
-}
-
-/* TIMER */
+let timer = 120;
 
 setInterval(()=>{
 
-countdown--;
+timer--;
 
-document.getElementById("refreshText").innerHTML =
-`Refreshing in ${countdown}s`;
+document.getElementById("timer").innerText = timer;
 
-document.getElementById("refreshFill").style.width =
-(countdown/120)*100 + "%";
-
-if(countdown<=0){
-
-countdown=120;
-
-fetchData();
-
+if(timer<=0){
+timer = 120;
 }
 
 },1000);
-
-/* INIT */
-
-fetchData();
 
 </script>
 
