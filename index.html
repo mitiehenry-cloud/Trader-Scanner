@@ -29,112 +29,187 @@ color:var(--text);
 font-family:'DM Sans',sans-serif;
 }
 
-.container{
-max-width:900px;
-margin:auto;
-padding:16px;
-padding-bottom:120px;
-}
-
 /* HEADER */
 .header{
 position:sticky;
 top:0;
-background:rgba(6,10,18,.95);
-backdrop-filter:blur(10px);
-border-bottom:1px solid var(--border);
-padding:14px;
+z-index:100;
 display:flex;
-justify-content:space-between;
 align-items:center;
-z-index:10;
+justify-content:space-between;
+padding:14px 16px;
+background:rgba(6,10,18,.96);
+border-bottom:1px solid var(--border);
 }
 
-/* CARD */
-.card{
+.header-left{display:flex;align-items:center;gap:12px;}
+
+.menu-btn{
+font-size:1.4rem;
+cursor:pointer;
+background:none;
+border:none;
+color:var(--text);
+}
+
+.logo{font-weight:700;font-size:1rem;}
+
+/* DROPDOWN */
+.dropdown{
+position:absolute;
+top:65px;
+left:14px;
+width:320px;
 background:var(--surface);
 border:1px solid var(--border);
 border-radius:16px;
+padding:14px;
+display:none;
+max-height:400px;
+overflow-y:auto;
+transform:translateY(-10px);
+transition:.3s ease;
+}
+
+.dropdown.open{
+display:block;
+transform:translateY(0);
+}
+
+.menu-title{
+font-size:.72rem;
+color:var(--muted);
+margin:10px 0;
+font-family:'Space Mono',monospace;
+}
+
+.menu-item{
+background:var(--surface2);
+padding:10px;
+border-radius:10px;
+margin-bottom:8px;
+font-family:'Space Mono',monospace;
+display:flex;
+justify-content:space-between;
+cursor:pointer;
+}
+
+/* CONTAINER */
+.container{
+max-width:900px;
+margin:auto;
 padding:16px;
-margin-bottom:14px;
+padding-bottom:90px;
+}
+
+.card{
+background:var(--surface);
+border:1px solid var(--border);
+border-radius:18px;
+padding:16px;
+margin-bottom:16px;
 }
 
 .title{
-font-size:.75rem;
+font-size:.72rem;
 color:var(--muted);
-font-family:'Space Mono',monospace;
 margin-bottom:10px;
+font-family:'Space Mono',monospace;
 }
 
-/* SIGNAL BOX */
+/* SIGNAL */
 .signal{
-padding:16px;
-border-radius:14px;
 background:var(--surface2);
+padding:18px;
+border-radius:16px;
 border-left:4px solid var(--green);
 font-family:'Space Mono',monospace;
+cursor:pointer;
 }
 
 .signal.short{border-left-color:var(--red);}
 
-/* FLOATING MENU */
-.floating{
-position:fixed;
-bottom:18px;
-left:50%;
-transform:translateX(-50%);
-display:flex;
+.badge{
+display:inline-block;
+padding:6px 12px;
+border-radius:20px;
+font-size:.7rem;
+margin:10px 0;
+font-weight:700;
+}
+
+.long{background:rgba(0,230,118,.12);color:var(--green);}
+.short{background:rgba(255,77,103,.12);color:var(--red);}
+
+/* GRID */
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
 gap:10px;
-background:rgba(13,19,32,.9);
-padding:10px;
-border:1px solid var(--border);
-border-radius:16px;
-backdrop-filter:blur(12px);
+margin-top:10px;
 }
 
-.fbtn{
+.box{
+background:var(--bg);
+padding:10px;
+border-radius:10px;
+border:1px solid var(--border);
+text-align:center;
 font-size:.75rem;
-padding:8px 10px;
-border-radius:10px;
-background:var(--surface2);
+}
+
+/* POPUP */
+.popup{
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+background:var(--surface);
+padding:18px;
+border-radius:14px;
 border:1px solid var(--border);
-color:var(--text);
-cursor:pointer;
+display:none;
+width:300px;
+z-index:200;
 }
 
-.fbtn.active{
-background:var(--blue);
+.popup.show{display:block;}
+
+.overlay{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.6);
+display:none;
+z-index:199;
 }
 
-/* LIST */
-.item{
-display:flex;
-justify-content:space-between;
+.overlay.show{display:block;}
+
+/* TRADERS */
+.traders a{
+display:block;
 padding:10px;
+margin:6px 0;
 background:var(--surface2);
 border-radius:10px;
-font-family:'Space Mono',monospace;
-font-size:.8rem;
+color:var(--text);
+text-decoration:none;
+font-family:'Space Mono';
 }
 
 /* FAUCET */
 .faucet{
 text-align:center;
-padding:14px;
 background:linear-gradient(135deg,#0d1a10,#0d1320);
-border:1px solid rgba(0,230,118,.2);
-border-radius:14px;
 }
 
-a{
-display:inline-block;
-margin-top:10px;
-background:var(--gold);
-padding:12px;
-border-radius:10px;
-color:#000;
-text-decoration:none;
-font-weight:700;
+button{
+padding:8px;
+border:none;
+background:var(--blue);
+color:white;
+border-radius:8px;
+cursor:pointer;
 }
 </style>
 </head>
@@ -142,140 +217,156 @@ font-weight:700;
 <body>
 
 <div class="header">
-<div>⚡ Trader Scanner</div>
-<div>LIVE</div>
+  <div class="header-left">
+    <button class="menu-btn" onclick="toggleMenu()">☰</button>
+    <div class="logo">Trader Scanner</div>
+  </div>
 </div>
+
+<!-- MENU -->
+<div class="dropdown" id="menu"></div>
 
 <div class="container">
 
-<!-- BEST TRADE -->
+<!-- BEST SIGNAL -->
 <div class="card">
 <div class="title">BEST TRADE SIGNAL</div>
-<div id="signalBox">Loading...</div>
+<div id="signal"></div>
 </div>
 
-<!-- DYNAMIC SECTION -->
-<div class="card">
-<div class="title" id="sectionTitle">SCALPING COINS</div>
-<div id="dynamicArea"></div>
+<!-- TRADERS -->
+<div class="card traders">
+<div class="title">TOP CRYPTO TRADERS</div>
+<a href="#">@TraderAlpha</a>
+<a href="#">@CryptoKing</a>
+<a href="#">@SignalPro</a>
 </div>
 
 <!-- FAUCET -->
 <div class="card faucet">
 <div class="title">EARN FREE CRYPTO</div>
-<div>Rating ⭐ 4.6 / 5</div>
-<a href="https://faucetcrypto.com/r/4202112" target="_blank">Claim Crypto</a>
+<p>⭐ 4.6 Rating</p>
+<a href="https://faucetcrypto.com/r/4202112" target="_blank">
+<button>Claim Crypto</button>
+</a>
 </div>
 
 </div>
 
-<!-- FLOATING BUTTONS -->
-<div class="floating">
-<button class="fbtn active" onclick="load('scalp',this)">Scalp</button>
-<button class="fbtn" onclick="load('up',this)">Up</button>
-<button class="fbtn" onclick="load('down',this)">Down</button>
-<button class="fbtn" onclick="load('early',this)">Early</button>
-</div>
+<!-- POPUP -->
+<div class="overlay" id="overlay" onclick="closePopup()"></div>
+<div class="popup" id="popup"></div>
 
 <script>
 
-let coins=["BTCUSDT","ETHUSDT","BNBUSDT","SOLUSDT","XRPUSDT","DOGEUSDT"];
+let coins=[];
 
-async function price(sym){
-let r=await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${sym}`);
-return await r.json();
+/* MENU */
+function toggleMenu(){
+document.getElementById("menu").classList.toggle("open");
 }
 
-/* BEST TRADE WITH INDICATOR */
-async function best(){
+/* FETCH */
+async function load(){
+let res=await fetch("https://api.binance.com/api/v3/ticker/24hr");
+coins=await res.json();
 
-let best=null;
+coins=coins.filter(c=>c.symbol.endsWith("USDT"));
 
-for(let c of coins){
-try{
-let d=await price(c);
-let ch=parseFloat(d.priceChangePercent);
-
-if(!best || Math.abs(ch) > Math.abs(best.change)){
-best={
-symbol:c,
-price:d.lastPrice,
-change:ch,
-type: ch>0 ? "LONG" : "SHORT"
-};
-}
-}catch(e){}
+buildMenu();
+bestSignal();
 }
 
-document.getElementById("signalBox").innerHTML=`
-<div class="signal ${best.type.toLowerCase()}">
+/* SCORING ENGINE */
+function score(c){
+let volume=parseFloat(c.quoteVolume);
+let momentum=parseFloat(c.priceChangePercent);
+let high=parseFloat(c.highPrice);
+let low=parseFloat(c.lowPrice);
+let price=parseFloat(c.lastPrice);
 
-<div style="font-size:0.85rem;font-weight:700;margin-bottom:8px;">
-${best.symbol}
+let volatility=(high-low)/price*100;
+
+let trend=Math.abs(momentum);
+
+return (volume/1e9)*0.3 + trend*0.4 + volatility*0.3;
+}
+
+/* BEST SIGNAL */
+function bestSignal(){
+coins.sort((a,b)=>score(b)-score(a));
+
+let c=coins[0];
+let change=parseFloat(c.priceChangePercent);
+
+let type=change>0?"LONG":"SHORT";
+
+document.getElementById("signal").innerHTML=`
+<div class="signal ${type==="SHORT"?"short":""}" onclick='openPopup("${c.symbol}")'>
+<div style="font-weight:700">${c.symbol}</div>
+
+<div class="badge ${type==="LONG"?"long":"short"}">${type}</div>
+
+<div class="grid">
+<div class="box">Entry<br>${c.lastPrice}</div>
+<div class="box">Change<br>${change.toFixed(2)}%</div>
 </div>
+</div>`;
+}
 
-<div style="
-display:inline-block;
-padding:6px 10px;
-border-radius:20px;
-font-size:0.7rem;
-margin-bottom:10px;
-background:${best.type==="LONG"?"rgba(0,230,118,.15)":"rgba(255,77,103,.15)"};
-color:${best.type==="LONG"?"#00e676":"#ff4d67"};
-">
-${best.type} SIGNAL
-</div>
+/* MENU BUILD */
+function buildMenu(){
 
-<br>
+let sorted=[...coins].sort((a,b)=>parseFloat(b.priceChangePercent)-parseFloat(a.priceChangePercent));
 
-Entry: ${best.price}<br>
-SL: ${(best.price*0.98).toFixed(2)} | TP: ${(best.price*1.03).toFixed(2)}<br><br>
+let bullish=sorted.filter(c=>parseFloat(c.priceChangePercent)>0).slice(0,5);
+let bearish=sorted.filter(c=>parseFloat(c.priceChangePercent)<0).slice(0,5);
+let early=sorted.filter(c=>parseFloat(c.priceChangePercent)>2).slice(0,5);
 
-${best.change>0?"+":""}${best.change.toFixed(2)}%
+document.getElementById("menu").innerHTML=`
+<div class="menu-title">Bullish</div>
+${bullish.map(c=>item(c,"↑")).join("")}
 
-</div>
+<div class="menu-title">Bearish</div>
+${bearish.map(c=>item(c,"↓")).join("")}
+
+<div class="menu-title">Early Detection</div>
+${early.map(c=>item(c,"🚀")).join("")}
 `;
 }
 
-/* BUTTON SYSTEM */
-async function load(type,btn){
-
-document.querySelectorAll(".fbtn").forEach(b=>b.classList.remove("active"));
-btn.classList.add("active");
-
-let list=[];
-
-for(let c of coins.slice(0,3)){
-try{
-let d=await price(c);
-
-if(type==="scalp"){
-list.push(`${c} | ${d.priceChangePercent}%`);
-}
-if(type==="up" && d.priceChangePercent>0){
-list.push(`${c} ↑ ${d.priceChangePercent}%`);
-}
-if(type==="down" && d.priceChangePercent<0){
-list.push(`${c} ↓ ${d.priceChangePercent}%`);
-}
-if(type==="early"){
-list.push(`${c} momentum`);
-}
-}catch(e){}
+function item(c,icon){
+return `<div class="menu-item" onclick="openPopup('${c.symbol}')">
+<span>${c.symbol} ${icon}</span>
+<span>${parseFloat(c.priceChangePercent).toFixed(2)}%</span>
+</div>`;
 }
 
-document.getElementById("dynamicArea").innerHTML=
-list.map(x=>`<div class="item">${x}</div>`).join("");
+/* POPUP */
+function openPopup(sym){
+let c=coins.find(x=>x.symbol===sym);
+if(!c)return;
 
-document.getElementById("sectionTitle").innerText=
-type.toUpperCase();
+document.getElementById("popup").innerHTML=`
+<h3>${c.symbol}</h3>
+<p>Price: ${c.lastPrice}</p>
+<p>Change: ${c.priceChangePercent}%</p>
+<p>Volume: ${parseFloat(c.quoteVolume).toLocaleString()}</p>
+<p>Trend Strength: ${(Math.abs(c.priceChangePercent)).toFixed(2)}</p>
+`;
+
+document.getElementById("popup").classList.add("show");
+document.getElementById("overlay").classList.add("show");
+}
+
+function closePopup(){
+document.getElementById("popup").classList.remove("show");
+document.getElementById("overlay").classList.remove("show");
 }
 
 /* INIT */
-best();
-load("scalp",document.querySelector(".fbtn"));
-
-setInterval(best,300000);
+load();
+setInterval(load,300000);
 
 </script>
 
