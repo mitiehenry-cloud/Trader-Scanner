@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trader Scanner</title>
+<title>Trader Scanner Pro</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
 
@@ -35,63 +35,57 @@ position:sticky;
 top:0;
 z-index:100;
 display:flex;
-align-items:center;
 justify-content:space-between;
+align-items:center;
 padding:14px 16px;
 background:rgba(6,10,18,.96);
 border-bottom:1px solid var(--border);
 }
 
-.header-left{display:flex;align-items:center;gap:12px;}
-
 .menu-btn{
 font-size:1.4rem;
-cursor:pointer;
 background:none;
 border:none;
 color:var(--text);
+cursor:pointer;
 }
 
-.logo{font-weight:700;font-size:1rem;}
-
-/* DROPDOWN */
+/* DROPDOWN MENU */
 .dropdown{
 position:absolute;
-top:65px;
-left:14px;
+top:60px;
+left:10px;
 width:320px;
+max-height:420px;
+overflow-y:auto;
 background:var(--surface);
 border:1px solid var(--border);
-border-radius:16px;
-padding:14px;
-display:none;
-max-height:400px;
-overflow-y:auto;
-transform:translateY(-10px);
-transition:.3s ease;
+border-radius:14px;
+padding:12px;
+transform:translateX(-120%);
+transition:0.35s ease;
+z-index:999;
 }
 
 .dropdown.open{
-display:block;
-transform:translateY(0);
+transform:translateX(0);
 }
 
 .menu-title{
-font-size:.72rem;
+font-size:.7rem;
 color:var(--muted);
 margin:10px 0;
-font-family:'Space Mono',monospace;
 }
 
 .menu-item{
-background:var(--surface2);
 padding:10px;
+background:var(--surface2);
 border-radius:10px;
 margin-bottom:8px;
-font-family:'Space Mono',monospace;
 display:flex;
 justify-content:space-between;
-cursor:pointer;
+font-family:'Space Mono',monospace;
+font-size:.75rem;
 }
 
 /* CONTAINER */
@@ -99,15 +93,15 @@ cursor:pointer;
 max-width:900px;
 margin:auto;
 padding:16px;
-padding-bottom:90px;
+padding-bottom:80px;
 }
 
 .card{
 background:var(--surface);
 border:1px solid var(--border);
-border-radius:18px;
+border-radius:16px;
 padding:16px;
-margin-bottom:16px;
+margin-bottom:14px;
 }
 
 .title{
@@ -121,95 +115,76 @@ font-family:'Space Mono',monospace;
 .signal{
 background:var(--surface2);
 padding:18px;
-border-radius:16px;
+border-radius:14px;
 border-left:4px solid var(--green);
 font-family:'Space Mono',monospace;
-cursor:pointer;
+color:#fff;
 }
 
 .signal.short{border-left-color:var(--red);}
 
 .badge{
 display:inline-block;
-padding:6px 12px;
+padding:6px 10px;
 border-radius:20px;
 font-size:.7rem;
-margin:10px 0;
-font-weight:700;
+margin:8px 0;
 }
 
-.long{background:rgba(0,230,118,.12);color:var(--green);}
-.short{background:rgba(255,77,103,.12);color:var(--red);}
+.long{background:rgba(0,230,118,.15);color:var(--green);}
+.short{background:rgba(255,77,103,.15);color:var(--red);}
 
-/* GRID */
+/* METRICS */
 .grid{
 display:grid;
 grid-template-columns:1fr 1fr;
 gap:10px;
-margin-top:10px;
+margin-top:12px;
 }
 
 .box{
-background:var(--bg);
+background:#0a1020;
 padding:10px;
 border-radius:10px;
-border:1px solid var(--border);
 text-align:center;
-font-size:.75rem;
+font-family:'Space Mono',monospace;
 }
 
-/* POPUP */
-.popup{
-position:fixed;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
-background:var(--surface);
-padding:18px;
-border-radius:14px;
-border:1px solid var(--border);
-display:none;
-width:300px;
-z-index:200;
+.small{
+font-size:.65rem;
+color:var(--muted);
 }
 
-.popup.show{display:block;}
-
-.overlay{
-position:fixed;
-inset:0;
-background:rgba(0,0,0,.6);
-display:none;
-z-index:199;
-}
-
-.overlay.show{display:block;}
-
-/* TRADERS */
-.traders a{
-display:block;
-padding:10px;
-margin:6px 0;
-background:var(--surface2);
-border-radius:10px;
-color:var(--text);
-text-decoration:none;
-font-family:'Space Mono';
-}
-
-/* FAUCET */
-.faucet{
-text-align:center;
-background:linear-gradient(135deg,#0d1a10,#0d1320);
-}
-
-button{
-padding:8px;
-border:none;
-background:var(--blue);
-color:white;
-border-radius:8px;
+/* TIP SECTION */
+.tip-box{
 cursor:pointer;
+background:var(--surface2);
+padding:12px;
+border-radius:12px;
+}
+
+.tip-content{
+display:none;
+margin-top:10px;
+font-size:.85rem;
+color:var(--text);
+line-height:1.5;
+}
+
+.tip-box.open .tip-content{
+display:block;
+}
+
+/* BUTTON */
+.btn{
+background:var(--gold);
+color:#000;
+padding:10px;
+display:inline-block;
+border-radius:10px;
+text-decoration:none;
+font-weight:700;
+margin-top:10px;
 }
 </style>
 </head>
@@ -217,156 +192,158 @@ cursor:pointer;
 <body>
 
 <div class="header">
-  <div class="header-left">
-    <button class="menu-btn" onclick="toggleMenu()">☰</button>
-    <div class="logo">Trader Scanner</div>
-  </div>
+<button class="menu-btn" onclick="toggleMenu()">☰</button>
+<div>Trader Scanner Pro</div>
 </div>
 
 <!-- MENU -->
-<div class="dropdown" id="menu"></div>
+<div class="dropdown" id="menu">
+
+<div class="menu-title">📈 BULLISH</div>
+<div id="bullish"></div>
+
+<div class="menu-title">📉 BEARISH</div>
+<div id="bearish"></div>
+
+<div class="menu-title">🚀 EARLY (>2%)</div>
+<div id="early"></div>
+
+</div>
 
 <div class="container">
 
 <!-- BEST SIGNAL -->
 <div class="card">
 <div class="title">BEST TRADE SIGNAL</div>
-<div id="signal"></div>
+<div id="signal">Loading...</div>
 </div>
 
-<!-- TRADERS -->
-<div class="card traders">
-<div class="title">TOP CRYPTO TRADERS</div>
-<a href="#">@TraderAlpha</a>
-<a href="#">@CryptoKing</a>
-<a href="#">@SignalPro</a>
+<!-- BREAKOUT SNIPER -->
+<div class="card">
+<div class="title">BREAKOUT SNIPER ALERTS</div>
+<div id="sniper"></div>
 </div>
 
-<!-- FAUCET -->
-<div class="card faucet">
-<div class="title">EARN FREE CRYPTO</div>
-<p>⭐ 4.6 Rating</p>
-<a href="https://faucetcrypto.com/r/4202112" target="_blank">
-<button>Claim Crypto</button>
-</a>
+<!-- TIPS -->
+<div class="card">
+<div class="title">HOW TO MAKE MONEY (CLICK)</div>
+<div class="tip-box" onclick="this.classList.toggle('open')">
+👉 Tap to expand
+<div class="tip-content">
+• Trade only high volume coins<br>
+• Follow trend direction (never fight it)<br>
+• Take profit early, don’t be greedy<br>
+• Protect capital first, profit second<br>
+• Use breakout confirmations only
+</div>
+</div>
 </div>
 
 </div>
-
-<!-- POPUP -->
-<div class="overlay" id="overlay" onclick="closePopup()"></div>
-<div class="popup" id="popup"></div>
 
 <script>
 
 let coins=[];
 
-/* MENU */
+async function load(){
+let res=await fetch("https://api.binance.com/api/v3/ticker/24hr");
+coins=await res.json();
+coins=coins.filter(c=>c.symbol.endsWith("USDT"));
+process();
+setTimeout(load,300000);
+}
+
+function score(c){
+let ch=parseFloat(c.priceChangePercent);
+let vol=parseFloat(c.volume);
+let momentum=Math.abs(ch);
+let trendStrength=momentum*0.6 + (vol/100000)*0.4;
+
+let signal= ch>0 ? "LONG":"SHORT";
+
+let ai = ch>3 ? "STRONG UP 📈" :
+ch<-3 ? "STRONG DOWN 📉" :
+ch>0 ? "UP" : "DOWN";
+
+let whale = vol>5000000 ? "🐋 WHALE" : "";
+
+return {c,ch,vol,signal,momentum,trendStrength,ai,whale};
+}
+
+function process(){
+
+coins.sort((a,b)=>Math.abs(b.priceChangePercent)-Math.abs(a.priceChangePercent));
+
+let best=score(coins[0]);
+
+let price=parseFloat(best.c.lastPrice);
+let sl=(price*0.98).toFixed(4);
+let tp=(price*1.03).toFixed(4);
+
+document.getElementById("signal").innerHTML=`
+<div class="signal ${best.signal==="SHORT"?"short":""}">
+
+<div style="font-size:1rem;font-weight:700;color:#fff">
+${best.c.symbol}
+</div>
+
+<div class="badge ${best.signal==="LONG"?"long":"short"}">
+${best.signal}
+</div>
+
+<div class="grid">
+<div class="box"><div class="small">ENTRY</div>${price}</div>
+<div class="box"><div class="small">SL / TP</div>${sl} / ${tp}</div>
+<div class="box"><div class="small">AI</div>${best.ai}</div>
+<div class="box"><div class="small">WHALE</div>${best.whale}</div>
+</div>
+
+<div style="margin-top:10px">
+Volatility: ${best.momentum.toFixed(2)}%<br>
+Trend Strength: ${best.trendStrength.toFixed(2)}
+</div>
+
+</div>
+`;
+
+buildMenu();
+sniperAlerts();
+}
+
+function buildMenu(){
+
+let bull=coins.filter(c=>c.priceChangePercent>0).slice(0,3);
+let bear=coins.filter(c=>c.priceChangePercent<0).slice(0,3);
+let early=coins.filter(c=>c.priceChangePercent>2).slice(0,3);
+
+document.getElementById("bullish").innerHTML=bull.map(c=>
+`<div class="menu-item">${c.symbol}<span>${c.priceChangePercent}%</span></div>`
+).join("");
+
+document.getElementById("bearish").innerHTML=bear.map(c=>
+`<div class="menu-item">${c.symbol}<span>${c.priceChangePercent}%</span></div>`
+).join("");
+
+document.getElementById("early").innerHTML=early.map(c=>
+`<div class="menu-item">${c.symbol}<span>🚀 ${c.priceChangePercent}%</span></div>`
+).join("");
+}
+
+function sniperAlerts(){
+let sniper=coins.filter(c=>Math.abs(c.priceChangePercent)>4).slice(0,3);
+
+document.getElementById("sniper").innerHTML=sniper.map(c=>
+`<div class="menu-item">
+${c.symbol} <span>${c.priceChangePercent}%</span>
+</div>`
+).join("");
+}
+
 function toggleMenu(){
 document.getElementById("menu").classList.toggle("open");
 }
 
-/* FETCH */
-async function load(){
-let res=await fetch("https://api.binance.com/api/v3/ticker/24hr");
-coins=await res.json();
-
-coins=coins.filter(c=>c.symbol.endsWith("USDT"));
-
-buildMenu();
-bestSignal();
-}
-
-/* SCORING ENGINE */
-function score(c){
-let volume=parseFloat(c.quoteVolume);
-let momentum=parseFloat(c.priceChangePercent);
-let high=parseFloat(c.highPrice);
-let low=parseFloat(c.lowPrice);
-let price=parseFloat(c.lastPrice);
-
-let volatility=(high-low)/price*100;
-
-let trend=Math.abs(momentum);
-
-return (volume/1e9)*0.3 + trend*0.4 + volatility*0.3;
-}
-
-/* BEST SIGNAL */
-function bestSignal(){
-coins.sort((a,b)=>score(b)-score(a));
-
-let c=coins[0];
-let change=parseFloat(c.priceChangePercent);
-
-let type=change>0?"LONG":"SHORT";
-
-document.getElementById("signal").innerHTML=`
-<div class="signal ${type==="SHORT"?"short":""}" onclick='openPopup("${c.symbol}")'>
-<div style="font-weight:700">${c.symbol}</div>
-
-<div class="badge ${type==="LONG"?"long":"short"}">${type}</div>
-
-<div class="grid">
-<div class="box">Entry<br>${c.lastPrice}</div>
-<div class="box">Change<br>${change.toFixed(2)}%</div>
-</div>
-</div>`;
-}
-
-/* MENU BUILD */
-function buildMenu(){
-
-let sorted=[...coins].sort((a,b)=>parseFloat(b.priceChangePercent)-parseFloat(a.priceChangePercent));
-
-let bullish=sorted.filter(c=>parseFloat(c.priceChangePercent)>0).slice(0,5);
-let bearish=sorted.filter(c=>parseFloat(c.priceChangePercent)<0).slice(0,5);
-let early=sorted.filter(c=>parseFloat(c.priceChangePercent)>2).slice(0,5);
-
-document.getElementById("menu").innerHTML=`
-<div class="menu-title">Bullish</div>
-${bullish.map(c=>item(c,"↑")).join("")}
-
-<div class="menu-title">Bearish</div>
-${bearish.map(c=>item(c,"↓")).join("")}
-
-<div class="menu-title">Early Detection</div>
-${early.map(c=>item(c,"🚀")).join("")}
-`;
-}
-
-function item(c,icon){
-return `<div class="menu-item" onclick="openPopup('${c.symbol}')">
-<span>${c.symbol} ${icon}</span>
-<span>${parseFloat(c.priceChangePercent).toFixed(2)}%</span>
-</div>`;
-}
-
-/* POPUP */
-function openPopup(sym){
-let c=coins.find(x=>x.symbol===sym);
-if(!c)return;
-
-document.getElementById("popup").innerHTML=`
-<h3>${c.symbol}</h3>
-<p>Price: ${c.lastPrice}</p>
-<p>Change: ${c.priceChangePercent}%</p>
-<p>Volume: ${parseFloat(c.quoteVolume).toLocaleString()}</p>
-<p>Trend Strength: ${(Math.abs(c.priceChangePercent)).toFixed(2)}</p>
-`;
-
-document.getElementById("popup").classList.add("show");
-document.getElementById("overlay").classList.add("show");
-}
-
-function closePopup(){
-document.getElementById("popup").classList.remove("show");
-document.getElementById("overlay").classList.remove("show");
-}
-
-/* INIT */
 load();
-setInterval(load,300000);
 
 </script>
 
