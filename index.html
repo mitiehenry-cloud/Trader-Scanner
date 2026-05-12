@@ -1,25 +1,24 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trader Scanner Institutional</title>
+<title>Trader Scanner Pro</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
 :root{
---bg:#05070d;
---surface:#0b1220;
---surface2:#111a2e;
---border:#1a2a45;
---text:#e8eef8;
---muted:#7a8aa5;
+--bg:#070b14;
+--card:#0e1626;
+--card2:#121c2f;
+--border:#1d2a44;
+--text:#e9eefc;
+--muted:#7d8aa6;
 --green:#00e676;
 --red:#ff4d67;
---blue:#3b82f6;
 --gold:#f0b90b;
+--blue:#3b82f6;
 }
 
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -38,58 +37,61 @@ z-index:100;
 display:flex;
 justify-content:space-between;
 align-items:center;
-padding:14px;
-background:rgba(5,7,13,.95);
+padding:14px 16px;
+background:rgba(7,11,20,.95);
+backdrop-filter:blur(12px);
 border-bottom:1px solid var(--border);
-backdrop-filter:blur(10px);
 }
 
 .menu-btn{
+font-size:1.4rem;
 background:none;
 border:none;
 color:var(--text);
-font-size:1.4rem;
 cursor:pointer;
 }
 
+.title{font-weight:700}
+
 /* MENU */
 .menu{
-position:absolute;
+position:fixed;
 top:60px;
-left:12px;
-width:360px;
-max-height:70vh;
-overflow-y:auto;
-background:var(--surface);
+left:10px;
+width:320px;
+background:var(--card);
 border:1px solid var(--border);
-border-radius:14px;
+border-radius:16px;
 padding:12px;
 display:none;
+max-height:70vh;
+overflow-y:auto;
+z-index:200;
 animation:slide .25s ease;
 }
 
 .menu.open{display:block;}
 
 @keyframes slide{
-from{transform:translateY(-10px);opacity:0}
-to{transform:translateY(0);opacity:1}
+from{transform:translateX(-20px);opacity:0}
+to{transform:translateX(0);opacity:1}
 }
 
-.section-title{
+.menu h4{
 font-size:.7rem;
 color:var(--muted);
-margin:10px 0 6px;
+margin:10px 0;
 }
 
-.item{
-display:flex;
-justify-content:space-between;
+.menu-item{
+background:var(--card2);
 padding:10px;
-background:var(--surface2);
 border-radius:10px;
-margin-bottom:6px;
+margin-bottom:8px;
 font-family:'Space Mono';
 font-size:.75rem;
+display:flex;
+justify-content:space-between;
 }
 
 /* CONTAINER */
@@ -99,20 +101,28 @@ margin:auto;
 padding:16px;
 }
 
-/* SIGNAL */
-.signal{
-background:var(--surface);
+/* CARD */
+.card{
+background:var(--card);
 border:1px solid var(--border);
 border-radius:16px;
+padding:14px;
+margin-bottom:14px;
+}
+
+/* SIGNAL */
+.signal{
+background:var(--card2);
 padding:16px;
-border-left:4px solid var(--blue);
+border-radius:14px;
+border-left:4px solid var(--green);
 font-family:'Space Mono';
 }
 
 .badge{
-padding:4px 10px;
-border-radius:20px;
 display:inline-block;
+padding:6px 10px;
+border-radius:20px;
 font-size:.7rem;
 margin:8px 0;
 }
@@ -120,24 +130,55 @@ margin:8px 0;
 .long{background:rgba(0,230,118,.15);color:var(--green);}
 .short{background:rgba(255,77,103,.15);color:var(--red);}
 
-/* GRID */
 .grid{
 display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px;
-margin-top:12px;
+grid-template-columns:1fr 1fr 1fr;
+gap:8px;
+margin-top:10px;
 }
 
 .box{
-background:var(--surface2);
+background:var(--bg);
 padding:10px;
 border-radius:10px;
-border:1px solid var(--border);
+text-align:center;
 font-family:'Space Mono';
 }
 
-.label{font-size:.6rem;color:var(--muted)}
-.value{font-size:.85rem;margin-top:4px}
+.label{font-size:.6rem;color:var(--muted);}
+.value{font-size:.8rem;font-weight:700;}
+
+.white{color:var(--text) !important;}
+
+/* BUTTON */
+.btn{
+display:inline-block;
+padding:10px 14px;
+background:var(--gold);
+color:#000;
+font-weight:700;
+border-radius:10px;
+text-decoration:none;
+margin-top:10px;
+}
+
+/* TIPS */
+.tip{
+background:var(--card2);
+padding:10px;
+border-radius:10px;
+margin-bottom:8px;
+cursor:pointer;
+}
+
+.tip-content{
+display:none;
+padding-top:8px;
+color:var(--muted);
+font-size:.85rem;
+}
+
+.tip.open .tip-content{display:block;}
 
 </style>
 </head>
@@ -146,26 +187,46 @@ font-family:'Space Mono';
 
 <div class="header">
 <button class="menu-btn" onclick="toggleMenu()">☰</button>
-<div>INSTITUTIONAL SCANNER</div>
+<div class="title">Trader Scanner Pro</div>
 </div>
 
-<div class="menu" id="menu">
-
-<div class="section-title">🧠 SMART MONEY FLOW</div>
-<div id="smart"></div>
-
-<div class="section-title">🐋 LIQUIDITY / WHALES</div>
-<div id="whales"></div>
-
-<div class="section-title">🚀 BREAKOUT ZONES</div>
-<div id="breakout"></div>
-
-</div>
+<!-- MENU -->
+<div class="menu" id="menu"></div>
 
 <div class="container">
 
-<div class="signal">
-<div id="signal">Loading institutional signal...</div>
+<!-- BEST SIGNAL -->
+<div class="card">
+<h4 style="color:var(--muted);font-size:.7rem;margin-bottom:8px;">BEST TRADE SIGNAL</h4>
+<div id="signal">Loading...</div>
+</div>
+
+<!-- FAUCET -->
+<div class="card">
+<h4 style="color:var(--muted);font-size:.7rem;">EARN FREE CRYPTO</h4>
+<div style="font-weight:700">⭐ 4.6 Rating</div>
+<a class="btn" href="https://faucetcrypto.com/r/4202112" target="_blank">Claim Crypto</a>
+</div>
+
+<!-- TIPS -->
+<div class="card">
+<h4 style="color:var(--muted);font-size:.7rem;">TIPS TO MAKE MONEY (CLICK)</h4>
+
+<div class="tip" onclick="this.classList.toggle('open')">
+Risk Management
+<div class="tip-content">Never risk more than 2% per trade. Survival first, profit second.</div>
+</div>
+
+<div class="tip" onclick="this.classList.toggle('open')">
+Entry Timing
+<div class="tip-content">Enter only after momentum confirmation + volume spike.</div>
+</div>
+
+<div class="tip" onclick="this.classList.toggle('open')">
+Trend Trading
+<div class="tip-content">Trade with trend direction, not against it.</div>
+</div>
+
 </div>
 
 </div>
@@ -178,102 +239,116 @@ function toggleMenu(){
 document.getElementById("menu").classList.toggle("open");
 }
 
-/* FORMAT VOLUME */
-function fmt(v){
+async function fetchData(){
+let res = await fetch("https://api.binance.com/api/v3/ticker/24hr");
+let data = await res.json();
+coins = data.filter(c=>c.symbol.endsWith("USDT"));
+buildMenu();
+bestSignal();
+}
+
+function formatVol(v){
+v = Number(v);
 if(v>1e9) return (v/1e9).toFixed(2)+"B";
 if(v>1e6) return (v/1e6).toFixed(2)+"M";
-if(v>1e3) return (v/1e3).toFixed(1)+"K";
-return v;
+return v.toFixed(0);
 }
 
-/* FETCH */
-async function load(){
-let r = await fetch("https://api.binance.com/api/v3/ticker/24hr");
-let d = await r.json();
+/* SMART SIGNAL ENGINE */
+function bestSignal(){
 
-coins = d.filter(c=>c.symbol.endsWith("USDT"));
-process();
-}
-
-/* INSTITUTIONAL ENGINE */
-function process(){
+let best=null;
 
 coins.forEach(c=>{
-c.volatility = Math.abs(c.priceChangePercent);
-c.volumeScore = c.volume/1000000;
-c.sweep = c.highPrice - c.lowPrice;
+let ch=parseFloat(c.priceChangePercent);
+let vol=parseFloat(c.quoteVolume);
+
+let score = Math.abs(ch) + (vol/1e8);
+
+if(!best || score>best.score){
+best={...c,score};
+}
 });
 
-/* SORT BY SMART MONEY SCORE */
-coins.sort((a,b)=>
-(b.volatility*0.6 + b.volumeScore*0.4) -
-(a.volatility*0.6 + a.volumeScore*0.4)
-);
+let price=parseFloat(best.lastPrice);
+let ch=parseFloat(best.priceChangePercent);
 
-let best = coins[0];
-let price = parseFloat(best.lastPrice);
-let ch = parseFloat(best.priceChangePercent);
+let type = ch>=0?"LONG":"SHORT";
 
-/* INSTITUTIONAL SCORE MODEL */
-let score =
-(Math.abs(ch)*0.7) +
-(best.volume/1e6)*0.3 +
-(Math.abs(best.highPrice-best.lowPrice)/price)*10;
+/* AI PREDICTION */
+let ai = ch>2 && parseFloat(best.quoteVolume)>1e8 ? "UP" : "DOWN";
 
-let type = ch>0?"LONG":"SHORT";
+/* WHALE */
+let whale = parseFloat(best.quoteVolume)>5e8 ? "🐋 WHALE" : "";
 
-/* SIGNAL */
+/* LIQUIDITY SWEEP (SIMULATED) */
+let sweep = Math.abs(ch)>5 ? "LIQUIDITY SWEEP" : "";
+
 document.getElementById("signal").innerHTML=`
-<div style="font-size:1rem">${best.symbol}</div>
+<div class="signal white">
 
-<div class="badge ${type==="LONG"?"long":"short"}">${type} SIGNAL</div>
+<div style="font-weight:700;font-size:1rem">${best.symbol}</div>
+
+<div class="badge ${type==='LONG'?'long':'short'}">${type} SIGNAL</div>
+
+<div style="font-family:Space Mono;margin:6px 0">
+AI: <b>${ai}</b> | ${whale} ${sweep}
+</div>
 
 <div class="grid">
-<div class="box"><div class="label">ENTRY</div><div class="value">${price.toFixed(4)}</div></div>
-<div class="box"><div class="label">SL</div><div class="value">${(price*0.98).toFixed(4)}</div></div>
-<div class="box"><div class="label">TP</div><div class="value">${(price*1.03).toFixed(4)}</div></div>
-<div class="box"><div class="label">SCORE</div><div class="value">${score.toFixed(2)}/10</div></div>
+<div class="box">
+<div class="label">ENTRY</div>
+<div class="value">${price.toFixed(4)}</div>
+</div>
+
+<div class="box">
+<div class="label">SL</div>
+<div class="value" style="color:var(--red)">${(price*0.98).toFixed(4)}</div>
+</div>
+
+<div class="box">
+<div class="label">TP</div>
+<div class="value" style="color:var(--green)">${(price*1.03).toFixed(4)}</div>
+</div>
+</div>
+
+<div style="margin-top:10px;font-family:Space Mono">
+Volume: ${formatVol(best.quoteVolume)} USDT<br>
+Change: ${ch.toFixed(2)}%
+</div>
+
 </div>
 `;
-
-/* SMART MONEY */
-let smart = [...coins].slice(0,5);
-
-document.getElementById("smart").innerHTML =
-smart.map(c=>`
-<div class="item">
-<span>${c.symbol}</span>
-<span>${c.priceChangePercent}%</span>
-</div>
-`).join("");
-
-/* WHALES */
-let whales = [...coins].filter(c=>c.volume>2000000).slice(0,5);
-
-document.getElementById("whales").innerHTML =
-whales.map(c=>`
-<div class="item">
-<span>${c.symbol}</span>
-<span>🐋 ${fmt(c.volume)}</span>
-</div>
-`).join("");
-
-/* BREAKOUT */
-let breakout = [...coins].filter(c=>Math.abs(c.priceChangePercent)>3).slice(0,5);
-
-document.getElementById("breakout").innerHTML =
-breakout.map(c=>`
-<div class="item">
-<span>${c.symbol}</span>
-<span>🚀</span>
-</div>
-`).join("");
-
 }
 
-/* LIVE UPDATE (NO REFRESH LOOP LIKE BEFORE) */
-load();
-setInterval(load, 120000);
+/* MENU DATA */
+function buildMenu(){
+
+let bullish = coins.filter(c=>parseFloat(c.priceChangePercent)>2).slice(0,5);
+let bearish = coins.filter(c=>parseFloat(c.priceChangePercent)<-2).slice(0,5);
+let early = coins.filter(c=>parseFloat(c.priceChangePercent)>2 && parseFloat(c.quoteVolume)>1e8).slice(0,5);
+
+function row(c){
+return `<div class="menu-item">
+<span>${c.symbol}</span>
+<span>${parseFloat(c.priceChangePercent).toFixed(2)}%</span>
+</div>`;
+}
+
+document.getElementById("menu").innerHTML=`
+<h4>BULLISH</h4>
+${bullish.map(row).join("")}
+
+<h4>BEARISH</h4>
+${bearish.map(row).join("")}
+
+<h4>EARLY BREAKOUT</h4>
+${early.map(row).join("")}
+`;
+}
+
+fetchData();
+setInterval(fetchData,300000);
 
 </script>
 
